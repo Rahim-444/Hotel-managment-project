@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="main.java.com.example.Poo.Login">
+  <grid id="27dc6" binding="MainPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+    <constraints>
+      <xy x="2" y="136" width="1280" height="720"/>
+    </constraints>
+    <properties>
+      <alignmentX value="0.0"/>
+      <background color="-13367808"/>
+      <minimumSize width="1280" height="720"/>
+      <preferredSize width="1280" height="720"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <grid id="51862" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+        <constraints/>
+        <properties>
+          <preferredSize width="680" height="720"/>
+        </properties>
+        <border type="none"/>
+        <children/>
+      </grid>
+      <grid id="26644" layout-manager="GridBagLayout">
+        <constraints/>
+        <properties>
+          <alignmentX value="0.0"/>
+          <alignmentY value="0.0"/>
+          <autoscrolls value="false"/>
+          <inheritsPopupMenu value="false"/>
+          <minimumSize width="20" height="20"/>
+          <preferredSize width="640" height="720"/>
+        </properties>
+        <border type="none"/>
+        <children/>
+      </grid>
+    </children>
+  </grid>
+</form>
