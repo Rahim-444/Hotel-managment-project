@@ -21,44 +21,32 @@ public class Login extends JFrame {
         this.screenWidth = screenWidth;
         this.buttonWidth = screenWidth / 3;
         this.padding = screenHeight / 10;
-
         setTitle("Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(screenWidth, screenHeight);
         setLocationRelativeTo(null);
-
         JPanel panel = new JPanel();
+        JPanel panel2 = new JPanel();
+        ImageIcon icon = new ImageIcon(
+                "./Mobile login pana.png");
+        Button loginButton = new Button("Login");
+        this.emailField = new JTextField();
+        // password input
+        this.passwordField = new JPasswordField();
+        this.emailField.setBounds((int) (0.75 * this.screenWidth) - (buttonWidth / 2), this.screenHeight
+                - (this.screenHeight / 3) - 3 * this.padding, this.buttonWidth,
+                50);
+        this.passwordField.setBounds((int) (0.75 * this.screenWidth) - (buttonWidth / 2), this.screenHeight
+                - (this.screenHeight / 3) - 2 * this.padding, this.buttonWidth,
+                50);
         panel.setLayout(null);
+        panel2.setLayout(null);
+        panel2.setBackground(new Color(116, 105, 182));
         panel.setBackground(new Color(255, 230, 230));
-        panel.setBounds(0, 0, screenWidth, screenHeight);
-
-        JLabel emailLabel = new JLabel("Email:");
-        emailLabel.setBounds((int) (0.75 * screenWidth) - (buttonWidth / 2), screenHeight
-                - (screenHeight / 3) - 3 * padding, buttonWidth,
-                50);
-        panel.add(emailLabel);
-
-        emailField = new JTextField();
-        emailField.setBounds((int) (0.75 * screenWidth) - (buttonWidth / 2), screenHeight
-                - (screenHeight / 3) - 2 * padding, buttonWidth,
-                50);
-        panel.add(emailField);
-
-        JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setBounds((int) (0.75 * screenWidth) - (buttonWidth / 2), screenHeight
-                - (screenHeight / 3) - padding, buttonWidth,
-                50);
-        panel.add(passwordLabel);
-
-        passwordField = new JPasswordField();
-        passwordField.setBounds((int) (0.75 * screenWidth) - (buttonWidth / 2), screenHeight
-                - (screenHeight / 3), buttonWidth,
-                50);
-        panel.add(passwordField);
-
-        JButton loginButton = new JButton("Login");
-        loginButton.setBounds((int) (0.75 * screenWidth) - (buttonWidth / 2), screenHeight
-                - (screenHeight / 3) + padding, buttonWidth,
+        panel.setBounds(0, 0, this.screenWidth / 2, this.screenHeight);
+        panel2.setBounds(this.screenWidth / 2, 0, this.screenWidth / 2, this.screenHeight);
+        loginButton.setBounds((int) (0.75 * this.screenWidth) - (buttonWidth / 2), this.screenHeight
+                - (this.screenHeight / 3), this.buttonWidth,
                 50);
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -71,9 +59,12 @@ public class Login extends JFrame {
                 new UserController(Login.this).loginUser(email, password);
             }
         });
-        panel.add(loginButton);
-
+        panel2.add(loginButton);
+        panel.add(new JLabel(icon));
+        panel2.add(this.emailField);
+        panel2.add(this.passwordField);
         add(panel);
+        add(panel2);
         setVisible(true);
     }
 
@@ -89,4 +80,3 @@ public class Login extends JFrame {
         SwingUtilities.invokeLater(() -> new Login(600, 800));
     }
 }
-

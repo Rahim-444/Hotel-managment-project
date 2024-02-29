@@ -12,7 +12,8 @@ public class UserController {
 
     public void loginUser(String email, String password) {
         // Perform login logic here
-        // For demonstration purposes, let's just show a message based on the provided email and password
+        // For demonstration purposes, let's just show a message based on the provided
+        // email and password
         if ("example@example.com".equals(email) && "password".equals(password)) {
             loginView.showSuccessMessage();
         } else {
@@ -22,4 +23,3 @@ public class UserController {
 
     // You can add more methods here for handling other user-related functionality
 }
-
