@@ -1,7 +1,6 @@
 package main.java.com.example.Poo.controller;
 
 import main.java.com.example.Poo.view.Login;
-import javax.swing.*;
 
 public class UserController {
     private final Login loginView;

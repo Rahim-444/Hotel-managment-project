@@ -76,7 +76,4 @@ public class Login extends JFrame {
         JOptionPane.showMessageDialog(this, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Login(600, 800));
-    }
 }
