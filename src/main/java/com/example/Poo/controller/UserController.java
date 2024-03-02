@@ -17,23 +17,25 @@ public class UserController {
         // For demonstration purposes, let's read user credentials from a file
 
         boolean isValidUser = checkUserCredentials(email, password);
-        
+
         if (isValidUser) {
             loginView.showSuccessMessage();
-          } else {
+        } else {
             loginView.showErrorMessage("Invalid email or password");
         }
     }
 
     private boolean checkUserCredentials(String email, String password) {
-          String filePath = "./user_credentials.txt"; // Path to your file
+        String filePath = "user_credentials.txt"; // Path to your file
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // Assuming each line in the file contains email and password separated by a comma
+                // Assuming each line in the file contains email and password separated by a
+                // comma
                 String[] parts = line.split(",");
                 String storedEmail = parts[0].trim();
                 String storedPassword = parts[1].trim();
+                email = email.trim();
                 if (email.equals(storedEmail) && password.equals(storedPassword)) {
                     return true; // Credentials match
                 }
@@ -46,4 +48,3 @@ public class UserController {
 
     // You can add more methods here for handling other user-related functionality
 }
-
