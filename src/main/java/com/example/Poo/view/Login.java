@@ -27,8 +27,6 @@ public class Login extends JFrame {
         setLocationRelativeTo(null);
         JPanel panel = new JPanel();
         JPanel panel2 = new JPanel();
-        ImageIcon icon = new ImageIcon(
-                "./Mobile login pana.png");
         Button loginButton = new Button("Login");
         this.emailField = new JTextField();
         // password input
@@ -60,7 +58,6 @@ public class Login extends JFrame {
             }
         });
         panel2.add(loginButton);
-        panel.add(new JLabel(icon));
         panel2.add(this.emailField);
         panel2.add(this.passwordField);
         add(panel);
