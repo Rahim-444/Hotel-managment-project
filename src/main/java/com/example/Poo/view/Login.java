@@ -28,6 +28,12 @@ public class Login extends JFrame {
         JPanel panel = new JPanel();
         JPanel panel2 = new JPanel();
         Button loginButton = new Button("Login");
+        ImageIcon icon = new ImageIcon("src/main/java/resources/Login.png");
+        Image image = icon.getImage();
+        Image resizedImage = image.getScaledInstance(this.screenWidth / 2, this.screenHeight, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(resizedImage);
+        JLabel picLabel = new JLabel(icon);
+        picLabel.setBounds(0, 0, this.screenWidth / 2, this.screenHeight);
         this.emailField = new JTextField();
         // password input
         this.passwordField = new JPasswordField();
@@ -39,8 +45,9 @@ public class Login extends JFrame {
                 50);
         panel.setLayout(null);
         panel2.setLayout(null);
+        panel.add(picLabel);
         panel2.setBackground(new Color(116, 105, 182));
-        panel.setBackground(new Color(255, 230, 230));
+        // panel.setBackground(new Color(255, 230, 230));
         panel.setBounds(0, 0, this.screenWidth / 2, this.screenHeight);
         panel2.setBounds(this.screenWidth / 2, 0, this.screenWidth / 2, this.screenHeight);
         loginButton.setBounds((int) (0.75 * this.screenWidth) - (buttonWidth / 2), this.screenHeight
