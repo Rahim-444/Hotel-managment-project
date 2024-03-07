@@ -16,6 +16,7 @@ import java.io.FileWriter;
 public class UserController {
 
   private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
+  private boolean isValidUser;
   private final Login loginView;
 
   public UserController(Login loginView) {
@@ -23,25 +24,60 @@ public class UserController {
   }
 
   public void loginUser(String email, String password) {
-    // Perform login logic here
-    // For demonstration purposes, let's read user credentials from a file
 
-    boolean isValidUser = checkUserCredentials(email, password);
+    if (email.isEmpty() || password.isEmpty()) {
+      loginView.showErrorMessage("Email and password are required");
+      return;
+    }
+    this.isValidUser = checkUserCredentials(email, password);
 
     if (isValidUser) {
-      loginView.showSuccessMessage();
+      loginView.showSuccessMessage("User logged in successfully");
     } else {
       loginView.showErrorMessage("Invalid email or password");
     }
   }
 
+  public void createUser(String email, String password, String confirmedPassword) {
+
+    if (email.isEmpty() || password.isEmpty() || confirmedPassword.isEmpty()) {
+      loginView.showErrorMessage("Email, password and confirmed password are required");
+      return;
+    }
+    if (!password.equals(confirmedPassword)) {
+      loginView.showErrorMessage("Password and confirmed password do not match");
+      return;
+    }
+    boolean isRegistered = registerUser(email, password);
+    if (isRegistered) {
+      loginView.showSuccessMessage("User registered successfully");
+    } else {
+      loginView.showErrorMessage("Email already registered");
+    }
+  }
+
+  private static boolean checkIfAlreadyLoggedin(String email) {
+    String filePath = "user_credentials.txt"; // Path to your file
+    try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+      String line;
+      while ((line = br.readLine()) != null) {
+        String[] parts = line.split(",");
+        String storedEmail = parts[0].trim();
+        if (storedEmail.trim().equals(email.trim())) {
+          return true; // User already logged in
+        }
+      }
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, "Error reading logged in users file.", e);
+    }
+    return false; // User not logged in or error occurred
+  }
+
   private static boolean checkUserCredentials(String email, String password) {
     String filePath = "user_credentials.txt"; // Path to your file
     try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-     String line;
+      String line;
       while ((line = br.readLine()) != null) {
-        // Assuming each line in the file contains email and password separated by a
-        // comma
         String[] parts = line.split(",");
         if (parts.length >= 2) { // Check if there are at least two elements in the array
           String storedEmail = parts[0].trim();
@@ -63,6 +99,9 @@ public class UserController {
   }
 
   private static boolean registerUser(String email, String password) {
+    if (checkIfAlreadyLoggedin(email)) {
+      return false; // User already exists
+    }
 
     // Hash the password
     String hashedPassword = hashPassword(password);
@@ -95,6 +134,4 @@ public class UserController {
       return null; // Failed to hash password
     }
   }
-
-  // You can add more methods here for handling other user-related functionality
 }
