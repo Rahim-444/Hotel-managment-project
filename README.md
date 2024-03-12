@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the design and implementation of a hotel management system with login functionality. The system is developed using Java Swing for the GUI and follows the MVC architecture, made by DANA Amine and belkacemi abderrahim.
+This document outlines the design and implementation of a hotel management system with login functionality. The system is developed using Java Swing for the GUI and follows the MVC architecture, made by DANA Amine and BELKACEMI Abderrahim.
 
 ## Components
 
