@@ -1,6 +1,8 @@
 ./bin
 bin
 bin/
-./workspace/
 workspace/
 .Ds_Store
+.idea
+
+user_credentials.txt
