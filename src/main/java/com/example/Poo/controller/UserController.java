@@ -1,17 +1,16 @@
 package main.java.com.example.Poo.controller;
 
-import main.java.com.example.Poo.view.Login;
-
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
+import main.java.com.example.Poo.view.Login;
 
 public class UserController {
 
@@ -73,8 +72,7 @@ public class UserController {
 
   private boolean checkUserCredentials(String email, String password) {
     String query = "SELECT * FROM users WHERE email = ? AND password = ?";
-    try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername,
-        dbPassword);
+    try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
       preparedStatement.setString(1, email);
       preparedStatement.setString(2, hashPassword(password));
@@ -89,7 +87,8 @@ public class UserController {
 
   private boolean checkIfUsersTableExists() {
     // SQL query to check if the users table exists
-    String query = "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'users')";
+    String query =
+        "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'users')";
     try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -107,7 +106,9 @@ public class UserController {
 
   private void createUsersTable() {
     // SQL statement to create the users table
-    String query = "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, email VARCHAR(255) UNIQUE, password VARCHAR(255))";
+    String query =
+        "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, email VARCHAR(255) UNIQUE,"
+            + " password VARCHAR(255))";
     try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
       // Execute the SQL statement to create the users table
@@ -126,8 +127,7 @@ public class UserController {
       createUsersTable();
     }
     String query = "INSERT INTO users (email, password) VALUES (?, ?)";
-    try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername,
-        dbPassword);
+    try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
       preparedStatement.setString(1, email);
       preparedStatement.setString(2, hashPassword(password));
@@ -141,8 +141,7 @@ public class UserController {
 
   private boolean checkIfEmailExists(String email) {
     String query = "SELECT * FROM users WHERE email = ?";
-    try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername,
-        dbPassword);
+    try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
       preparedStatement.setString(1, email);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
