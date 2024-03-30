@@ -20,7 +20,7 @@ public class UserController {
 
   private final String dbUrl = "jdbc:postgresql://localhost:5432/mydatabase";
   private final String dbUsername = "postgres";
-  private final String dbPassword = "    ";
+  private final String dbPassword = "postgres";
 
   public UserController(Login loginView) {
     this.loginView = loginView;

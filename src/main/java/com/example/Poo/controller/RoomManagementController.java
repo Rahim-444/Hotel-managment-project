@@ -1,8 +1,7 @@
 package main.java.com.example.Poo.controller;
 
-import main.java.com.example.Poo.model.Room;
-
 import java.util.List;
+import main.java.com.example.Poo.model.Room;
 
 public class RoomManagementController {
   private final Room room;
@@ -12,7 +11,9 @@ public class RoomManagementController {
   }
 
   public void addRoom(int roomNumber, String type, boolean available, double pricePerNight) {
-    room.addRoom(roomNumber, type, available, pricePerNight);
+    Room newRoom = new Room(roomNumber, type, available, pricePerNight);
+    newRoom.addRoom();
+    // room.addRoom(roomNumber, type, available, pricePerNight);
   }
 
   public void removeRoom(int roomNumber) {
