@@ -40,6 +40,18 @@ public class Room {
     this.roomNumber = roomNumber;
   }
 
+  public void updateRoom(int roomNumber, String columnName, Object data) {
+    String sql = "UPDATE rooms SET " + columnName + " = ? WHERE room_number = ?";
+    try (Connection conn = connect();
+        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setObject(1, data);
+      pstmt.setInt(2, roomNumber);
+      pstmt.executeUpdate();
+    } catch (SQLException e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
   public String getType() {
     return type;
   }

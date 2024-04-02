@@ -20,6 +20,10 @@ public class RoomManagementController {
     room.removeRoom(roomNumber);
   }
 
+  public void updateRoom(int roomNumber, String columnName, Object data) {
+    room.updateRoom(roomNumber, columnName, data);
+  }
+
   public List<Room> getAllRooms() {
     return room.getAllRooms();
   }

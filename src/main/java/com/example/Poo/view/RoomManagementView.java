@@ -3,6 +3,7 @@ package main.java.com.example.Poo.view;
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 import main.java.com.example.Poo.controller.RoomManagementController;
 import main.java.com.example.Poo.model.Room;
@@ -49,6 +50,34 @@ public class RoomManagementView extends JFrame {
     tableModel.addColumn("Type");
     tableModel.addColumn("Available");
     tableModel.addColumn("Price per Night");
+    tableModel.addTableModelListener(
+        new TableModelListener() {
+          @Override
+          public void tableChanged(TableModelEvent e) {
+            int row = e.getFirstRow();
+            int column = e.getColumn();
+            if (column != -1) {
+              int roomNumber = (int) tableModel.getValueAt(row, 0);
+              String columnName = tableModel.getColumnName(column);
+              Object data;
+              if (columnName.equals("Available")) {
+                String input = (String) tableModel.getValueAt(row, column);
+                input = input.toLowerCase().trim();
+                if ("true".equals(input)) {
+                  data = true;
+                } else {
+                  data = false;
+                }
+              } else if (columnName.equals("Price per Night")) {
+                columnName = "price_per_night";
+                data = Double.parseDouble((String) tableModel.getValueAt(row, column));
+              } else {
+                data = tableModel.getValueAt(row, column);
+              }
+              controller.updateRoom(roomNumber, columnName, data);
+            }
+          }
+        });
 
     addButton.addActionListener(e -> addRoom());
     removeButton.addActionListener(e -> removeRoom());
@@ -99,6 +128,8 @@ public class RoomManagementView extends JFrame {
     }
     showAllRooms();
   }
+
+  // update the table data when the table is changed
 
   private void addRoom() {
     try {
