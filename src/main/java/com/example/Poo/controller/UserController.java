@@ -11,6 +11,7 @@ import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.java.com.example.Poo.view.Login;
+import main.java.com.example.Poo.view.RoomManagementView;
 
 public class UserController {
 
@@ -26,7 +27,7 @@ public class UserController {
     this.loginView = loginView;
   }
 
-  public void loginUser(String email, String password) {
+  public void loginUser(String email, String password, boolean isAdmin) {
     if (email.isEmpty() || password.isEmpty()) {
       loginView.showErrorMessage("Email and password are required");
       return;
@@ -34,7 +35,16 @@ public class UserController {
     this.isValidUser = checkUserCredentials(email, password);
 
     if (isValidUser) {
-      loginView.showSuccessMessage("User logged in successfully");
+      if (isAdmin) {
+        // close the login view and open the hotel management view
+        loginView.dispose();
+        RoomManagementController controller = new RoomManagementController();
+        RoomManagementView roomManagementView = new RoomManagementView(720, 1280, controller);
+        roomManagementView.setVisible(true);
+      } else {
+        // TODO: hotel list (user view)
+        loginView.showSuccessMessage("User logged in successfully");
+      }
     } else {
       loginView.showErrorMessage("Invalid email or password");
     }
@@ -62,7 +72,8 @@ public class UserController {
       loginView.showErrorMessage("Password and confirmed password do not match");
       return;
     }
-    boolean isRegistered = registerUser(email, password);
+    boolean isAdmin = email.contains("@hotel.com");
+    boolean isRegistered = registerUser(email, password, isAdmin);
     if (isRegistered) {
       loginView.showSuccessMessage("User registered successfully");
     } else {
@@ -85,30 +96,16 @@ public class UserController {
     }
   }
 
-  private boolean checkIfUsersTableExists() {
-    // SQL query to check if the users table exists
-    String query =
-        "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'users')";
-    try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        ResultSet resultSet = preparedStatement.executeQuery()) {
-      // Check if the query returned a result
-      if (resultSet.next()) {
-        // Return true if the result indicates that the table exists, false otherwise
-        return resultSet.getBoolean(1);
-      }
-    } catch (SQLException e) {
-      LOGGER.log(Level.SEVERE, "Error checking if users table exists", e);
-    }
-    // Return false if an error occurred or if the result set was empty
-    return false;
-  }
-
   private void createUsersTable() {
     // SQL statement to create the users table
     String query =
         "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, email VARCHAR(255) UNIQUE,"
-            + " password VARCHAR(255))";
+            + " is_admin BOOLEAN DEFAULT FALSE, password VARCHAR(255))";
+
+    // FIX: alter the current table because i added a column for Amine only after
+    // doing this remove it
+    // String query = "ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN
+    // DEFAULT FALSE";
     try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
       // Execute the SQL statement to create the users table
@@ -119,18 +116,18 @@ public class UserController {
     }
   }
 
-  private boolean registerUser(String email, String password) {
+  private boolean registerUser(String email, String password, boolean isAdmin) {
     if (checkIfEmailExists(email)) {
       return false; // Email already registered
     }
-    if (!checkIfUsersTableExists()) {
-      createUsersTable();
-    }
-    String query = "INSERT INTO users (email, password) VALUES (?, ?)";
+    // crate if not exist users table
+    createUsersTable();
+    String query = "INSERT INTO users (email, password, is_admin) VALUES (?, ?, ?)";
     try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
       preparedStatement.setString(1, email);
       preparedStatement.setString(2, hashPassword(password));
+      preparedStatement.setBoolean(3, isAdmin);
       int rowsInserted = preparedStatement.executeUpdate();
       return rowsInserted > 0;
     } catch (SQLException e) {

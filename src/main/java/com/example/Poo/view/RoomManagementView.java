@@ -18,6 +18,7 @@ public class RoomManagementView extends JFrame {
   private JButton removeButton;
   private JTextField deletedRoomNumber;
   private JButton showAllButton;
+  private JButton refreshButton;
 
   private RoomManagementController controller;
 
@@ -45,6 +46,8 @@ public class RoomManagementView extends JFrame {
     removeButton = new JButton("Remove Room");
     deletedRoomNumber = new JTextField(10);
     showAllButton = new JButton("Show All Rooms");
+    refreshButton = new JButton("Refresh");
+    refreshButton.addActionListener(e -> showAllRooms());
 
     tableModel.addColumn("Room Number");
     tableModel.addColumn("Type");
@@ -71,6 +74,9 @@ public class RoomManagementView extends JFrame {
               } else if (columnName.equals("Price per Night")) {
                 columnName = "price_per_night";
                 data = Double.parseDouble((String) tableModel.getValueAt(row, column));
+              } else if (columnName.equals("Room Number")) {
+                System.out.println("Room number cannot be changed!");
+                return;
               } else {
                 data = tableModel.getValueAt(row, column);
               }
@@ -100,6 +106,9 @@ public class RoomManagementView extends JFrame {
     deletePanel.add(new JLabel("Room Number:"));
     deletePanel.add(deletedRoomNumber);
     deletePanel.add(removeButton);
+    // TODO: remove or uncomment this depends if its possible to include the auto
+    // refresh feature
+    // deletePanel.add(refreshButton);
 
     showAllRooms();
 

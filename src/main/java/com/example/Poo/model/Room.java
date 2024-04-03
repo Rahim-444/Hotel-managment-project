@@ -27,6 +27,8 @@ public class Room {
     this.pricePerNight = pricePerNight;
   }
 
+  public Room() {}
+
   // Method to establish database connection
   private Connection connect() throws SQLException {
     return DriverManager.getConnection(url, user, password);

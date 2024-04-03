@@ -196,9 +196,13 @@ public class Login extends JFrame implements ComponentListener {
           @Override
           public void actionPerformed(ActionEvent e) {
             String email = emailField.getText();
+            boolean isAdmin = false;
+            if (email.contains("@hotel.com")) {
+              isAdmin = true;
+            }
             String password = new String(passwordField.getPassword());
             if (isLogin) {
-              new UserController(Login.this).loginUser(email, password);
+              new UserController(Login.this).loginUser(email, password, isAdmin);
               return;
             } else {
               String confirmedPassword = new String(confirmPasswordField.getPassword());

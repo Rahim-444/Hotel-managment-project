@@ -6,8 +6,8 @@ import main.java.com.example.Poo.model.Room;
 public class RoomManagementController {
   private final Room room;
 
-  public RoomManagementController(Room room) {
-    this.room = room;
+  public RoomManagementController() {
+    this.room = new Room();
   }
 
   public void addRoom(int roomNumber, String type, boolean available, double pricePerNight) {
