@@ -7,6 +7,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import javax.swing.*;
 import main.java.com.example.Poo.controller.UserController;
+import main.java.com.example.Poo.model.User;
 
 public class Login extends JFrame implements ComponentListener {
   private int screenWidth;
@@ -202,7 +203,7 @@ public class Login extends JFrame implements ComponentListener {
             }
             String password = new String(passwordField.getPassword());
             if (isLogin) {
-              new UserController(Login.this).loginUser(email, password, isAdmin);
+              new UserController(Login.this).loginUser(new User(email, password, isAdmin));
               return;
             } else {
               String confirmedPassword = new String(confirmPasswordField.getPassword());

@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import main.java.com.example.Poo.model.User;
 import main.java.com.example.Poo.view.Login;
 import main.java.com.example.Poo.view.RoomManagementView;
 
@@ -27,15 +28,15 @@ public class UserController {
     this.loginView = loginView;
   }
 
-  public void loginUser(String email, String password, boolean isAdmin) {
-    if (email.isEmpty() || password.isEmpty()) {
+  public void loginUser(User user) {
+    if (user.getEmail().isEmpty() || user.getPassword().isEmpty()) {
       loginView.showErrorMessage("Email and password are required");
       return;
     }
-    this.isValidUser = checkUserCredentials(email, password);
+    this.isValidUser = checkUserCredentials(user.getEmail(), user.getPassword());
 
     if (isValidUser) {
-      if (isAdmin) {
+      if (user.isAdmin()) {
         // close the login view and open the hotel management view
         loginView.dispose();
         RoomManagementController controller = new RoomManagementController();
