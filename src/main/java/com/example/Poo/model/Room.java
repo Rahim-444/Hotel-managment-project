@@ -1,5 +1,9 @@
 package main.java.com.example.Poo.model;
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,12 +11,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+// import graphics
 
 public class Room {
   private int roomNumber;
   private String type;
   private boolean available;
   private double pricePerNight;
+  private JLabel imageLabel;
 
   // Database connection parameters
   private String url = "jdbc:postgresql://localhost:5432/mydatabase";
@@ -20,11 +31,13 @@ public class Room {
   private String password = "postgres";
 
   // Constructor
-  public Room(int roomNumber, String type, boolean available, double pricePerNight) {
+  public Room(
+      int roomNumber, String type, boolean available, double pricePerNight, JLabel imageLabel) {
     this.roomNumber = roomNumber;
     this.type = type;
     this.available = available;
     this.pricePerNight = pricePerNight;
+    this.imageLabel = imageLabel;
   }
 
   public Room() {}
@@ -36,6 +49,10 @@ public class Room {
 
   public int getRoomNumber() {
     return roomNumber;
+  }
+
+  public JLabel getImageLabel() {
+    return imageLabel;
   }
 
   public void setRoomNumber(int roomNumber) {
@@ -81,8 +98,8 @@ public class Room {
   // check if the table rooms exists
   public void checkTable() {
     String sql =
-        "CREATE TABLE IF NOT EXISTS rooms (room_number INT PRIMARY KEY, type TEXT, available"
-            + " BOOLEAN, price_per_night DOUBLE PRECISION)";
+        "CREATE TABLE IF NOT EXISTS rooms (room_number INT PRIMARY KEY, type TEXT,available"
+            + " BOOLEAN, price_per_night DOUBLE PRECISION, image BYTEA)";
     try (Connection conn = connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
       pstmt.executeUpdate();
@@ -94,17 +111,42 @@ public class Room {
   public void addRoom() {
     checkTable();
     String sql =
-        "INSERT INTO rooms (room_number, type, available, price_per_night) VALUES (?, ?, ?, ?)";
+        "INSERT INTO rooms (room_number, type, available, price_per_night, image) VALUES (?, ?, ?,"
+            + " ?, ?)";
     try (Connection conn = connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
       pstmt.setInt(1, roomNumber);
       pstmt.setString(2, type);
       pstmt.setBoolean(3, available);
       pstmt.setDouble(4, pricePerNight);
+
+      try {
+        byte[] imageData = getImageData(imageLabel.getIcon());
+        pstmt.setBytes(5, imageData);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
       pstmt.executeUpdate();
     } catch (SQLException e) {
       System.out.println(e.getMessage());
     }
+  }
+
+  // icon to byte array
+  private byte[] getImageData(Icon icon) throws IOException {
+    BufferedImage image =
+        new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+    Graphics g = image.getGraphics();
+    icon.paintIcon(null, g, 0, 0);
+    g.dispose();
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ImageIO.write(image, "png", baos);
+    baos.flush();
+    byte[] imageData = baos.toByteArray();
+    baos.close();
+    return imageData;
   }
 
   public void removeRoom(int roomNumber) {
@@ -130,7 +172,9 @@ public class Room {
                 rs.getInt("room_number"),
                 rs.getString("type"),
                 rs.getBoolean("available"),
-                rs.getDouble("price_per_night"));
+                rs.getDouble("price_per_night"),
+                // FIX:might cause error
+                new JLabel(new ImageIcon((byte[]) rs.getObject("image"))));
         rooms.add(room);
       }
     } catch (SQLException e) {

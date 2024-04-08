@@ -233,8 +233,7 @@ public class Login extends JFrame implements ComponentListener {
 
   @Override
   public void componentResized(ComponentEvent e) {
-    resizeTimer.restart(); // Restart the timer every time
-    // the window is resized
+    resizeTimer.restart();
   }
 
   @Override

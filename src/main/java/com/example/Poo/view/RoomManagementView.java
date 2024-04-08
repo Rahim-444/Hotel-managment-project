@@ -5,6 +5,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
+import main.java.com.example.Poo.controller.*;
 import main.java.com.example.Poo.controller.RoomManagementController;
 import main.java.com.example.Poo.model.Room;
 
@@ -19,6 +20,8 @@ public class RoomManagementView extends JFrame {
   private JTextField deletedRoomNumber;
   private JButton showAllButton;
   private JButton refreshButton;
+  private JButton uploadImageButton;
+  private JLabel imageLabel;
 
   private RoomManagementController controller;
 
@@ -47,6 +50,7 @@ public class RoomManagementView extends JFrame {
     deletedRoomNumber = new JTextField(10);
     showAllButton = new JButton("Show All Rooms");
     refreshButton = new JButton("Refresh");
+    uploadImageButton = new JButton("Upload Image");
     refreshButton.addActionListener(e -> showAllRooms());
 
     tableModel.addColumn("Room Number");
@@ -85,7 +89,15 @@ public class RoomManagementView extends JFrame {
           }
         });
 
-    addButton.addActionListener(e -> addRoom());
+    addButton.addActionListener(
+        e -> {
+          if (imageLabel == null) {
+            JOptionPane.showMessageDialog(
+                this, "Please upload an image!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+          }
+          addRoom();
+        });
     removeButton.addActionListener(e -> removeRoom());
     showAllButton.addActionListener(e -> showAllRooms());
 
@@ -100,15 +112,17 @@ public class RoomManagementView extends JFrame {
     additionPanel.add(availableCheckBox);
     additionPanel.add(new JLabel("Price per Night:"));
     additionPanel.add(priceField);
+    additionPanel.add(uploadImageButton);
     additionPanel.add(addButton);
+    uploadImageButton.addActionListener(
+        e -> {
+          this.imageLabel = controller.uploadImage(this);
+        });
 
     JPanel deletePanel = new JPanel(new FlowLayout());
     deletePanel.add(new JLabel("Room Number:"));
     deletePanel.add(deletedRoomNumber);
     deletePanel.add(removeButton);
-    // TODO: remove or uncomment this depends if its possible to include the auto
-    // refresh feature
-    // deletePanel.add(refreshButton);
 
     showAllRooms();
 
@@ -147,12 +161,13 @@ public class RoomManagementView extends JFrame {
       boolean available = availableCheckBox.isSelected();
       double pricePerNight = Double.parseDouble(priceField.getText());
 
-      controller.addRoom(roomNumber, type, available, pricePerNight);
+      controller.addRoom(roomNumber, type, available, pricePerNight, imageLabel);
 
       roomNumberField.setText("");
       typeField.setText("");
       availableCheckBox.setSelected(false);
       priceField.setText("");
+      this.imageLabel = null;
       showAllRooms();
     } catch (NumberFormatException e) {
       JOptionPane.showMessageDialog(
@@ -161,11 +176,8 @@ public class RoomManagementView extends JFrame {
   }
 
   private void showAllRooms() {
-    // Call the controller method to fetch all rooms from the database
     List<Room> rooms = controller.getAllRooms();
-    // Clear existing table data
     tableModel.setRowCount(0);
-    // Populate table with fetched rooms
     for (Room room : rooms) {
       Object[] rowData = {
         room.getRoomNumber(), room.getType(), room.isAvailable(), room.getPricePerNight()

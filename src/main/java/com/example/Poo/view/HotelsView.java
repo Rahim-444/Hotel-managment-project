@@ -1,14 +1,21 @@
 package main.java.com.example.Poo.view;
 
 import java.awt.*;
+import java.util.List;
 import javax.swing.*;
+import main.java.com.example.Poo.controller.RoomManagementController;
+import main.java.com.example.Poo.model.Room;
 
 public class HotelsView extends JFrame {
   private JPanel panel;
   private JLabel label;
   private JButton button;
+  private RoomManagementController controller;
+  private List<Room> rooms;
 
-  public HotelsView(int height, int width) {
+  public HotelsView(int height, int width, RoomManagementController controller) {
+    this.controller = controller;
+    this.rooms = controller.getAllRooms();
     setTitle("Hotels");
     setSize(width, height);
     setLocationRelativeTo(null);
@@ -31,30 +38,28 @@ public class HotelsView extends JFrame {
         new JScrollPane(panel),
         BorderLayout.CENTER); // Add panel with cards in the center with scrollbars if necessary
 
-    for (int i = 0; i < 10; i++) {
-      panel.add(new HotelCard());
+    for (Room room : rooms) {
+      panel.add(new HotelCard(room));
     }
 
     setVisible(true); // Show the frame
   }
 
   private class HotelCard extends JPanel {
-    public HotelCard() {
+    public HotelCard(Room room) {
       setPreferredSize(new Dimension(200, 150)); // Example size for the card
       setBackground(Color.white); // Example background color
       setBorder(BorderFactory.createLineBorder(Color.gray, 1)); // Example border
       setLayout(new BorderLayout());
 
-      JLabel nameLabel = new JLabel("Hotel Name"); // Example label for hotel name
+      JLabel nameLabel = new JLabel(room.getType()); // Example label for hotel name
       nameLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center align the text
 
-      JLabel priceLabel = new JLabel("$100 per night"); // Example label for price
+      JLabel priceLabel = new JLabel("$" + room.getPricePerNight());
       priceLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center align the text
 
       add(nameLabel, BorderLayout.NORTH);
-      add(
-          new JLabel(new ImageIcon("hotel_image.jpg")),
-          BorderLayout.CENTER); // Example image for the hotel
+      add(room.getImageLabel(), BorderLayout.CENTER); // Example image for the hotel
       add(priceLabel, BorderLayout.SOUTH);
     }
   }
