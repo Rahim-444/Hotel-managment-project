@@ -11,8 +11,8 @@ import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.java.com.example.Poo.model.User;
+import main.java.com.example.Poo.view.*;
 import main.java.com.example.Poo.view.Login;
-import main.java.com.example.Poo.view.RoomManagementView;
 
 public class UserController {
 
@@ -43,8 +43,9 @@ public class UserController {
         RoomManagementView roomManagementView = new RoomManagementView(720, 1280, controller);
         roomManagementView.setVisible(true);
       } else {
-        // TODO: hotel list (user view)
-        loginView.showSuccessMessage("User logged in successfully");
+        loginView.dispose();
+        HotelsView hotelsView = new HotelsView(720, 1280, new RoomManagementController());
+        hotelsView.setVisible(true);
       }
     } else {
       loginView.showErrorMessage("Invalid email or password");
