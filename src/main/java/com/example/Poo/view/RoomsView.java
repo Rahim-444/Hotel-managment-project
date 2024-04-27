@@ -2,6 +2,7 @@ package main.java.com.example.Poo.view;
 
 import java.awt.*;
 import javax.swing.*;
+import main.java.com.example.Poo.controller.ReservationController;
 import main.java.com.example.Poo.model.Room;
 
 public class RoomsView extends JFrame {
@@ -11,6 +12,7 @@ public class RoomsView extends JFrame {
   private JLabel roomDescription;
   private JButton joinButton;
   private JButton leaveButton;
+  private ReservationController reservationController = new ReservationController();
 
   public RoomsView(Room room) {
     this.roomName = new JLabel(room.getType());
@@ -29,5 +31,10 @@ public class RoomsView extends JFrame {
     this.setSize(800, 600);
     this.setLocationRelativeTo(null);
     this.setVisible(true);
+    joinButton.addActionListener(
+        e -> {
+          reservationController.makeReservation(1, room.getRoomNumber(), null, null);
+        });
+    leaveButton.addActionListener(e -> {});
   }
 }

@@ -8,7 +8,8 @@ public class HotelController {
   private boolean isAvailable;
   private ImageIcon roomImage;
 
-  public HotelController(String roomId, double roomPrice, boolean isAvailable, ImageIcon roomImage) {
+  public HotelController(
+      String roomId, double roomPrice, boolean isAvailable, ImageIcon roomImage) {
     this.roomId = roomId;
     this.roomPrice = roomPrice;
     this.isAvailable = isAvailable;
