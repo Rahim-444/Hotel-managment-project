@@ -24,6 +24,7 @@ public class Room {
   private boolean available;
   private double pricePerNight;
   private JLabel imageLabel;
+  private String desc;
 
   // Database connection parameters
   private String url = "jdbc:postgresql://localhost:5432/mydatabase";
@@ -32,12 +33,18 @@ public class Room {
 
   // Constructor
   public Room(
-      int roomNumber, String type, boolean available, double pricePerNight, JLabel imageLabel) {
+      int roomNumber,
+      String type,
+      boolean available,
+      double pricePerNight,
+      JLabel imageLabel,
+      String desc) {
     this.roomNumber = roomNumber;
     this.type = type;
     this.available = available;
     this.pricePerNight = pricePerNight;
     this.imageLabel = imageLabel;
+    this.desc = desc;
   }
 
   public Room() {}
@@ -95,11 +102,19 @@ public class Room {
     this.pricePerNight = pricePerNight;
   }
 
+  public String getDescription() {
+    return desc;
+  }
+
+  public void setDescription(String desc) {
+    this.desc = desc;
+  }
+
   // check if the table rooms exists
   public void checkTable() {
     String sql =
         "CREATE TABLE IF NOT EXISTS rooms (room_number INT PRIMARY KEY, type TEXT,available"
-            + " BOOLEAN, price_per_night DOUBLE PRECISION, image BYTEA)";
+            + " BOOLEAN, price_per_night DOUBLE PRECISION, image BYTEA, description TEXT)";
     try (Connection conn = connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
       pstmt.executeUpdate();
@@ -111,8 +126,8 @@ public class Room {
   public void addRoom() {
     checkTable();
     String sql =
-        "INSERT INTO rooms (room_number, type, available, price_per_night, image) VALUES (?, ?, ?,"
-            + " ?, ?)";
+        "INSERT INTO rooms (room_number, type, available, price_per_night, image, description)"
+            + " VALUES (?, ?, ?, ?, ?, ?)";
     try (Connection conn = connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
       pstmt.setInt(1, roomNumber);
@@ -126,6 +141,7 @@ public class Room {
       } catch (IOException e) {
         e.printStackTrace();
       }
+      pstmt.setString(6, desc);
 
       pstmt.executeUpdate();
     } catch (SQLException e) {
@@ -133,7 +149,6 @@ public class Room {
     }
   }
 
-  // icon to byte array
   private byte[] getImageData(Icon icon) throws IOException {
     BufferedImage image =
         new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -173,8 +188,8 @@ public class Room {
                 rs.getString("type"),
                 rs.getBoolean("available"),
                 rs.getDouble("price_per_night"),
-                // FIX:might cause error
-                new JLabel(new ImageIcon((byte[]) rs.getObject("image"))));
+                new JLabel(new ImageIcon((byte[]) rs.getObject("image"))),
+                rs.getString("description"));
         rooms.add(room);
       }
     } catch (SQLException e) {

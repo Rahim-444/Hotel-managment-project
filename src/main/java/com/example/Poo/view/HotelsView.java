@@ -1,6 +1,9 @@
 package main.java.com.example.Poo.view;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.List;
 import javax.swing.*;
 import main.java.com.example.Poo.controller.RoomManagementController;
@@ -24,8 +27,8 @@ public class HotelsView extends JFrame {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
 
-    panel = new JPanel(new GridLayout(0, 3, 10, 10));
-    panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    panel = new JPanel(new GridLayout(0, 4, 10, 10));
+    panel.setBorder(BorderFactory.createEmptyBorder(10, 100, 10, 100));
     label = new JLabel("Search for a room:");
     label.setFont(new Font("Arial", Font.BOLD, 24));
     searchField = new JTextField();
@@ -53,12 +56,17 @@ public class HotelsView extends JFrame {
   }
 
   private void handleSearch() {
-    panel.removeAll();
-    panel.revalidate();
-    panel.repaint();
-    for (Room room : rooms) {
-      if (room.getType().contains(searchField.getText())) {
-        panel.add(new HotelCard(room));
+    String text = searchField.getText();
+    if (text.isEmpty()) {
+      drawRooms();
+    } else {
+      panel.removeAll();
+      panel.revalidate();
+      panel.repaint();
+      for (Room room : rooms) {
+        if (room.getType().toLowerCase().contains(text.toLowerCase())) {
+          panel.add(new HotelCard(room));
+        }
       }
     }
   }
@@ -74,30 +82,60 @@ public class HotelsView extends JFrame {
   }
 
   private class HotelCard extends JPanel {
+    private Room room;
+    private JLabel nameLabel, priceLabel, ratingLabel;
+    private ImageIcon roomImage;
+
     public HotelCard(Room room) {
-      setPreferredSize(new Dimension(200, 150));
-      setBackground(Color.white);
-      setBorder(BorderFactory.createLineBorder(Color.gray, 1));
-      setLayout(new BorderLayout());
+      this.room = room;
+      setPreferredSize(new Dimension(250, 200));
+      setBackground(Color.WHITE);
+      setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+      setLayout(null);
 
-      JLabel nameLabel = new JLabel(room.getType());
-      nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      nameLabel = new JLabel(room.getType());
+      nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+      nameLabel.setBounds(10, 10, 230, 20);
 
-      JLabel priceLabel = new JLabel("$" + room.getPricePerNight());
-      priceLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      priceLabel = new JLabel("$" + room.getPricePerNight());
+      priceLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+      priceLabel.setBounds(10, 170, 100, 20);
 
-      add(nameLabel, BorderLayout.NORTH);
-      add(room.getImageLabel(), BorderLayout.CENTER);
-      add(priceLabel, BorderLayout.SOUTH);
-      // when the card is clicked it will be taken to more detailed section about
-      // the hotel
+      ratingLabel = new JLabel("*****");
+      ratingLabel.setFont(new Font("Arial", Font.BOLD, 12));
+      ratingLabel.setBounds(200, 170, 40, 20);
+
+      roomImage = (ImageIcon) room.getImageLabel().getIcon();
+
+      JLabel imageLabel = new JLabel(roomImage);
+      imageLabel.setBounds(10, 40, 230, 120);
+
+      MouseListener hoverListener =
+          new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+              setBackground(new Color(230, 230, 230));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+              setBackground(Color.WHITE);
+            }
+          };
+
+      addMouseListener(hoverListener);
       addMouseListener(
-          new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-              RoomsView roomsView = new RoomsView(room);
-              roomsView.setVisible(true);
+          new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+              new RoomsView(room);
             }
           });
+
+      add(nameLabel);
+      add(priceLabel);
+      add(ratingLabel);
+      add(imageLabel);
     }
   }
 }

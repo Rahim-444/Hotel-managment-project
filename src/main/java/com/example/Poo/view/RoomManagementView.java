@@ -22,6 +22,7 @@ public class RoomManagementView extends JFrame {
   private JButton refreshButton;
   private JButton uploadImageButton;
   private JLabel imageLabel;
+  private JTextField roomDesc;
 
   private RoomManagementController controller;
 
@@ -51,12 +52,14 @@ public class RoomManagementView extends JFrame {
     showAllButton = new JButton("Show All Rooms");
     refreshButton = new JButton("Refresh");
     uploadImageButton = new JButton("Upload Image");
+    roomDesc = new JTextField(10);
     refreshButton.addActionListener(e -> showAllRooms());
 
     tableModel.addColumn("Room Number");
     tableModel.addColumn("Type");
     tableModel.addColumn("Available");
     tableModel.addColumn("Price per Night");
+    tableModel.addColumn("Description");
     tableModel.addTableModelListener(
         new TableModelListener() {
           @Override
@@ -78,6 +81,9 @@ public class RoomManagementView extends JFrame {
               } else if (columnName.equals("Price per Night")) {
                 columnName = "price_per_night";
                 data = Double.parseDouble((String) tableModel.getValueAt(row, column));
+              } else if (columnName.equals("Description")) {
+                columnName = "description";
+                data = tableModel.getValueAt(row, column);
               } else if (columnName.equals("Room Number")) {
                 System.out.println("Room number cannot be changed!");
                 return;
@@ -112,6 +118,8 @@ public class RoomManagementView extends JFrame {
     additionPanel.add(availableCheckBox);
     additionPanel.add(new JLabel("Price per Night:"));
     additionPanel.add(priceField);
+    additionPanel.add(new JLabel("Description:"));
+    additionPanel.add(roomDesc);
     additionPanel.add(uploadImageButton);
     additionPanel.add(addButton);
     uploadImageButton.addActionListener(
@@ -152,21 +160,21 @@ public class RoomManagementView extends JFrame {
     showAllRooms();
   }
 
-  // update the table data when the table is changed
-
   private void addRoom() {
     try {
       int roomNumber = Integer.parseInt(roomNumberField.getText());
       String type = typeField.getText();
       boolean available = availableCheckBox.isSelected();
       double pricePerNight = Double.parseDouble(priceField.getText());
+      String desc = roomDesc.getText();
 
-      controller.addRoom(roomNumber, type, available, pricePerNight, imageLabel);
+      controller.addRoom(roomNumber, type, available, pricePerNight, imageLabel, desc);
 
       roomNumberField.setText("");
       typeField.setText("");
       availableCheckBox.setSelected(false);
       priceField.setText("");
+      roomDesc.setText("");
       this.imageLabel = null;
       showAllRooms();
     } catch (NumberFormatException e) {
@@ -180,7 +188,11 @@ public class RoomManagementView extends JFrame {
     tableModel.setRowCount(0);
     for (Room room : rooms) {
       Object[] rowData = {
-        room.getRoomNumber(), room.getType(), room.isAvailable(), room.getPricePerNight()
+        room.getRoomNumber(),
+        room.getType(),
+        room.isAvailable(),
+        room.getPricePerNight(),
+        room.getDescription()
       };
       tableModel.addRow(rowData);
     }

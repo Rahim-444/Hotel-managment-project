@@ -17,8 +17,13 @@ public class RoomManagementController {
   }
 
   public void addRoom(
-      int roomNumber, String type, boolean available, double pricePerNight, JLabel imageLabel) {
-    Room newRoom = new Room(roomNumber, type, available, pricePerNight, imageLabel);
+      int roomNumber,
+      String type,
+      boolean available,
+      double pricePerNight,
+      JLabel imageLabel,
+      String desc) {
+    Room newRoom = new Room(roomNumber, type, available, pricePerNight, imageLabel, desc);
     newRoom.addRoom();
     // room.addRoom(roomNumber, type, available, pricePerNight);
   }
