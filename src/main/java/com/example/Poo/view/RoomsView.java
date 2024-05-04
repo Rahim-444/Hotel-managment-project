@@ -112,6 +112,12 @@ public class RoomsView extends JFrame {
           }
           reservationController.makeReservation(
               1, room.getRoomNumber(), selectedDate, selectedEndDate);
+          if (selectedDate == null || selectedEndDate == null) {
+            JOptionPane.showMessageDialog(null, "Please select a date range");
+            return;
+          }
+          reservationController.makeReservation(
+              1, room.getRoomNumber(), selectedDate, selectedEndDate);
         });
     datePanel.add(joinButton);
 
