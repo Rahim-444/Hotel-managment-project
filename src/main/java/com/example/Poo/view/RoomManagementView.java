@@ -1,6 +1,7 @@
 package main.java.com.example.Poo.view;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -23,6 +24,7 @@ public class RoomManagementView extends JFrame {
   private JButton uploadImageButton;
   private JLabel imageLabel;
   private JTextField roomDesc;
+  private JLabel switchClickabale;
 
   private RoomManagementController controller;
 
@@ -65,6 +67,17 @@ public class RoomManagementView extends JFrame {
     uploadImageButton = new JButton("Upload Image");
     roomDesc = new JTextField(10);
     refreshButton.addActionListener(e -> showAllRooms());
+    switchClickabale = new JLabel("Reservations management →");
+    switchClickabale.setForeground(Color.BLUE);
+
+    switchClickabale.addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            dispose();
+            new AdminReservationsView(getHeight(), getWidth()).setVisible(true);
+          }
+        });
 
     tableModel.addColumn("Room Number");
     tableModel.addColumn("Type");
@@ -96,13 +109,24 @@ public class RoomManagementView extends JFrame {
                 columnName = "description";
                 data = tableModel.getValueAt(row, column);
               } else if (columnName.equals("Room Number")) {
-                // deletedRoomNumber.setText((String) tableModel.getValueAt(row, column));
                 System.out.println("Room Number cannot be changed!");
                 return;
               } else {
                 data = tableModel.getValueAt(row, column);
               }
               controller.updateRoom(roomNumber, columnName, data);
+            }
+          }
+        });
+
+    roomTable.addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            int row = roomTable.rowAtPoint(e.getPoint());
+            int col = roomTable.columnAtPoint(e.getPoint());
+            if (row >= 0 && col >= 0) {
+              deletedRoomNumber.setText(String.valueOf(roomTable.getValueAt(row, 0)));
             }
           }
         });
@@ -143,6 +167,7 @@ public class RoomManagementView extends JFrame {
     deletePanel.add(new JLabel("Room Number:"));
     deletePanel.add(deletedRoomNumber);
     deletePanel.add(removeButton);
+    deletePanel.add(switchClickabale);
 
     showAllRooms();
 

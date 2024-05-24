@@ -57,7 +57,7 @@ public class RoomsView extends JFrame {
     JButton datePickerButton = new JButton("Choose Date Range");
     datePickerButton.addActionListener(
         e -> {
-          DatePicker datePicker = new DatePicker();
+          DatePicker datePicker = new DatePicker(room);
           datePicker.addWindowListener(
               new java.awt.event.WindowAdapter() {
                 @Override

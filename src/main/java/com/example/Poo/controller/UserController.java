@@ -103,10 +103,6 @@ public class UserController {
         "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, email VARCHAR(255) UNIQUE,"
             + " is_admin BOOLEAN DEFAULT FALSE, password VARCHAR(255))";
 
-    // FIX: alter the current table because i added a column for Amine only after
-    // doing this remove it
-    // String query = "ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN
-    // DEFAULT FALSE";
     try (Connection connection =
             DriverManager.getConnection(
                 Database.getUrl(), Database.getUser(), Database.getPassword());

@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -19,12 +20,16 @@ import javax.swing.JLabel;
 // import graphics
 
 public class Room {
+  private static int id = 0;
   private int roomNumber;
   private String type;
   private boolean available;
   private double pricePerNight;
   private JLabel imageLabel;
   private String desc;
+  private LocalDate startDate = LocalDate.of(2024, 5, 10);
+  private LocalDate endDate = LocalDate.now();
+  private ArrayList<Reservation> reservations = new ArrayList<>();
 
   // Constructor
   public Room(
@@ -40,6 +45,8 @@ public class Room {
     this.pricePerNight = pricePerNight;
     this.imageLabel = imageLabel;
     this.desc = desc;
+    id++;
+    reservations.add(new Reservation(id, 1, 1, startDate, endDate, 100.0));
   }
 
   public Room() {}
@@ -191,5 +198,9 @@ public class Room {
       System.out.println(e.getMessage());
     }
     return rooms;
+  }
+
+  public ArrayList<Reservation> getReservations() {
+    return reservations;
   }
 }

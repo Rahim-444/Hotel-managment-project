@@ -13,8 +13,9 @@ public class Application {
     // HotelsView hotelsView = new HotelsView(720, 1280, new
     // RoomManagementController());
     // hotelsView.setVisible(true);
-
-    AdminReservationsView adminReservationsView = new AdminReservationsView(720, 1280);
-    adminReservationsView.setVisible(true);
+    //
+    // AdminReservationsView adminReservationsView = new AdminReservationsView(720,
+    // 1280);
+    // adminReservationsView.setVisible(true);
   }
 }

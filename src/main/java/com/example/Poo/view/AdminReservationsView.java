@@ -1,6 +1,7 @@
 package main.java.com.example.Poo.view;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -8,11 +9,23 @@ import javax.swing.table.DefaultTableModel;
 import main.java.com.example.Poo.controller.*;
 import main.java.com.example.Poo.model.Reservation;
 
+class myTableModel extends DefaultTableModel {
+  public myTableModel() {
+    super();
+  }
+
+  @Override
+  public boolean isCellEditable(int row, int column) {
+    return false;
+  }
+}
+
 public class AdminReservationsView extends JFrame {
-  private DefaultTableModel tableModel;
+  private myTableModel tableModel;
   private JTextField reservationID;
   private JButton acceptButton;
   private JButton declineButton;
+  private JLabel switchClickabale;
 
   public AdminReservationsView(int screenHeight, int screenWidth) {
     setTitle("Admin Reservations");
@@ -24,13 +37,25 @@ public class AdminReservationsView extends JFrame {
   }
 
   private void initComponents() {
-    tableModel = new DefaultTableModel();
-    JTable roomTable = new JTable(tableModel);
-    JScrollPane scrollPane = new JScrollPane(roomTable);
+    tableModel = new myTableModel();
+    JTable resTable = new JTable(tableModel);
+    JScrollPane scrollPane = new JScrollPane(resTable);
 
     reservationID = new JTextField(10);
     acceptButton = new JButton("Accept");
     declineButton = new JButton("Decline");
+    switchClickabale = new JLabel("Room management →");
+    switchClickabale.setForeground(Color.BLUE);
+
+    switchClickabale.addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            dispose();
+            new RoomManagementView(getHeight(), getWidth(), new RoomManagementController())
+                .setVisible(true);
+          }
+        });
 
     tableModel.addColumn("Rservations ID");
     tableModel.addColumn("Client");
@@ -39,15 +64,12 @@ public class AdminReservationsView extends JFrame {
     tableModel.addColumn("Check Out");
     tableModel.addColumn("Price");
 
-    tableModel.addTableModelListener(
-        new TableModelListener() {
+    resTable.addMouseListener(
+        new MouseAdapter() {
           @Override
-          public void tableChanged(TableModelEvent e) {
-            int row = e.getFirstRow();
-            int column = e.getColumn();
-            if (column != -1) {
-              reservationID.setText((String) tableModel.getValueAt(row, 0));
-            }
+          public void mouseClicked(MouseEvent e) {
+            int row = resTable.getSelectedRow();
+            reservationID.setText(tableModel.getValueAt(row, 0).toString());
           }
         });
 
@@ -79,6 +101,7 @@ public class AdminReservationsView extends JFrame {
     deletePanel.add(reservationID);
     deletePanel.add(acceptButton);
     deletePanel.add(declineButton);
+    deletePanel.add(switchClickabale);
 
     showAllReservations();
 
