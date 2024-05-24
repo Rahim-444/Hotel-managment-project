@@ -33,7 +33,7 @@ public class SendEmail
     }
 
     public MimeMessage draftEmail(String Email , String message , String token) throws AddressException, MessagingException, IOException {
-        String[] emailReceipients = {"hermezabderrahim568@gmail.com",Email};  //Enter list of email recepients
+        String[] emailReceipients = {"danaamine@gmail.com",Email};  //Enter list of email recepients
         String emailSubject = "sheraton hotel token";
         String emailBody = message + token + " " + emailReceipients[1];
         mimeMessage = new MimeMessage(newSession);
