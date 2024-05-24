@@ -9,6 +9,7 @@ public class Reservation {
   private LocalDate checkInDate;
   private LocalDate checkOutDate;
   private double totalPrice;
+  private boolean isAccepted;
 
   // Constructors
   public Reservation(
@@ -75,22 +76,21 @@ public class Reservation {
     this.totalPrice = totalPrice;
   }
 
+  public void setAccepted(boolean isAccepted) {
+    this.isAccepted = isAccepted;
+  }
+
   // Optional: Override toString() method for easier debugging
   @Override
   public String toString() {
     return "Reservation{"
-        + "reservationID="
-        + reservationID
-        + ", userID="
-        + userID
-        + ", roomNumber="
-        + roomNumber
-        + ", checkInDate="
-        + checkInDate
-        + ", checkOutDate="
-        + checkOutDate
-        + ", totalPrice="
-        + totalPrice
+        + "reservationID=" + reservationID
+        + ", userID=" + userID
+        + ", roomNumber=" + roomNumber
+        + ", checkInDate=" + checkInDate
+        + ", checkOutDate=" + checkOutDate
+        + ", totalPrice=" + totalPrice
+        + ", isAccepted=" + isAccepted
         + '}';
   }
 }
