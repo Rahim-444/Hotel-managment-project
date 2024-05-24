@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.*;
 import main.java.com.example.Poo.controller.RoomManagementController;
 import main.java.com.example.Poo.model.Room;
+import main.java.com.example.Poo.model.User;
 
 public class HotelsView extends JFrame {
   private JPanel panel;
@@ -16,10 +17,12 @@ public class HotelsView extends JFrame {
   private RoomManagementController controller;
   private JButton clear;
   private List<Room> rooms;
+  private User user;
 
-  public HotelsView(int height, int width, RoomManagementController controller) {
+  public HotelsView(int height, int width, RoomManagementController controller, User user) {
     this.controller = controller;
     this.rooms = this.controller.getAllRooms();
+    this.user = user;
     setTitle("Rooms");
     setSize(width, height);
     setLocationRelativeTo(null);
@@ -130,7 +133,7 @@ public class HotelsView extends JFrame {
           new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-              new RoomsView(room);
+              new RoomsView(room, user);
             }
           });
 

@@ -19,32 +19,49 @@ public class ReservationController {
         Database.getUrl(), Database.getUser(), Database.getPassword());
   }
 
-  public boolean makeReservation(int userID, int roomNumber, Date checkInDate, Date checkOutDate) {
+  public boolean makeReservation(Reservation res) {
     java.sql.Date sqlCheckInDate =
-        new java.sql.Date(checkInDate.year, checkInDate.month, checkInDate.day);
+        new java.sql.Date(
+            res.getCheckInDate().getYear() - 1900,
+            res.getCheckInDate().getMonthValue(),
+            res.getCheckInDate().getDayOfMonth());
     java.sql.Date sqlCheckOutDate =
-        new java.sql.Date(checkOutDate.year, checkOutDate.month, checkOutDate.day);
-    System.out.println(sqlCheckInDate);
-    System.out.println(checkInDate.year);
-    if (!isRoomAvailable(roomNumber, sqlCheckInDate, sqlCheckOutDate)) {
+        new java.sql.Date(
+            res.getCheckOutDate().getYear() - 1900,
+            res.getCheckOutDate().getMonthValue(),
+            res.getCheckOutDate().getDayOfMonth());
+
+    if (!isRoomAvailable(res.getRoomNumber(), sqlCheckInDate, sqlCheckOutDate)) {
       System.out.println("Room is not available for the specified dates.");
       return false;
     }
 
-    BigDecimal totalPrice = calculateTotalPrice(roomNumber, checkInDate, checkOutDate);
+    Date checkInDate =
+        new Date(
+            res.getCheckInDate().getYear(),
+            res.getCheckInDate().getMonthValue(),
+            res.getCheckInDate().getDayOfMonth());
+
+    Date checkOutDate =
+        new Date(
+            res.getCheckOutDate().getYear(),
+            res.getCheckOutDate().getMonthValue(),
+            res.getCheckOutDate().getDayOfMonth());
+    BigDecimal totalPrice = calculateTotalPrice(res.getRoomNumber(), checkInDate, checkOutDate);
 
     try (Connection conn =
             DriverManager.getConnection(
                 Database.getUrl(), Database.getUser(), Database.getPassword());
         PreparedStatement pstmt =
             conn.prepareStatement(
-                "INSERT INTO Reservations (id, room_number, CheckInDate, CheckOutDate, TotalPrice)"
-                    + " VALUES (?, ?, ?, ?, ?)")) {
-      pstmt.setInt(1, userID);
-      pstmt.setInt(2, roomNumber);
+                "INSERT INTO Reservations (id, room_number, CheckInDate, CheckOutDate, TotalPrice,"
+                    + " isaccepted) VALUES (?, ?, ?, ?, ?, ?)")) {
+      pstmt.setInt(1, res.getUserID());
+      pstmt.setInt(2, res.getRoomNumber());
       pstmt.setDate(3, sqlCheckInDate);
       pstmt.setDate(4, sqlCheckOutDate);
       pstmt.setBigDecimal(5, totalPrice);
+      pstmt.setBoolean(6, res.getIsAccepted());
       pstmt.executeUpdate();
 
       System.out.println("Reservation successfully made.");
@@ -64,8 +81,6 @@ public class ReservationController {
             conn.prepareStatement(
                 "SELECT COUNT(*) FROM Reservations WHERE room_number = ? AND ((CheckInDate <= ? AND"
                     + " CheckOutDate >= ?) OR (CheckInDate <= ? AND CheckOutDate >= ?))")) {
-      // FIX: just changed the order of the things i don't know if it
-      // breaks the code
       pstmt.setInt(1, roomNumber);
       pstmt.setDate(2, checkInDate);
       pstmt.setDate(3, checkOutDate);
@@ -120,15 +135,16 @@ public class ReservationController {
         PreparedStatement pstmt = conn.prepareStatement(sql);
         ResultSet rs = pstmt.executeQuery()) {
       while (rs.next()) {
-        // TODO: Implement Reservation
-        // Reservation reservation =
-        // new Reservation(
-        // rs.getInt("id"),
-        // rs.getInt("room_number"),
-        // rs.getDate("CheckInDate"),
-        // rs.getDate("CheckOutDate"),
-        // rs.getBigDecimal("TotalPrice"));
-        // reservations.add(reservation);
+        Reservation reservation =
+            new Reservation(
+                rs.getInt("reservationid"),
+                rs.getInt("id"),
+                rs.getInt("room_number"),
+                rs.getDate("CheckInDate").toLocalDate(),
+                rs.getDate("CheckOutDate").toLocalDate(),
+                rs.getBigDecimal("TotalPrice").doubleValue(),
+                rs.getBoolean("isaccepted"));
+        reservations.add(reservation);
       }
     } catch (SQLException e) {
       System.out.println(e.getMessage());

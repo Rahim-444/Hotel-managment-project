@@ -2,6 +2,7 @@ package main.java.com.example.Poo.controller;
 
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -23,7 +24,8 @@ public class RoomManagementController {
       double pricePerNight,
       JLabel imageLabel,
       String desc) {
-    Room newRoom = new Room(roomNumber, type, available, pricePerNight, imageLabel, desc);
+    Room newRoom =
+        new Room(roomNumber, type, available, pricePerNight, imageLabel, desc, new ArrayList<>());
     newRoom.addRoom();
     // room.addRoom(roomNumber, type, available, pricePerNight);
   }

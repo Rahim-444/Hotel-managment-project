@@ -18,13 +18,15 @@ public class Reservation {
       int roomNumber,
       LocalDate checkInDate,
       LocalDate checkOutDate,
-      double totalPrice) {
+      double totalPrice,
+      boolean isAccepted) {
     this.reservationID = reservationID;
     this.userID = userID;
     this.roomNumber = roomNumber;
     this.checkInDate = checkInDate;
     this.checkOutDate = checkOutDate;
     this.totalPrice = totalPrice;
+    this.isAccepted = isAccepted;
   }
 
   // Getters and Setters
@@ -80,17 +82,27 @@ public class Reservation {
     this.isAccepted = isAccepted;
   }
 
-  // Optional: Override toString() method for easier debugging
+  public boolean getIsAccepted() {
+    return isAccepted;
+  }
+
   @Override
   public String toString() {
     return "Reservation{"
-        + "reservationID=" + reservationID
-        + ", userID=" + userID
-        + ", roomNumber=" + roomNumber
-        + ", checkInDate=" + checkInDate
-        + ", checkOutDate=" + checkOutDate
-        + ", totalPrice=" + totalPrice
-        + ", isAccepted=" + isAccepted
+        + "reservationID="
+        + reservationID
+        + ", userID="
+        + userID
+        + ", roomNumber="
+        + roomNumber
+        + ", checkInDate="
+        + checkInDate
+        + ", checkOutDate="
+        + checkOutDate
+        + ", totalPrice="
+        + totalPrice
+        + ", isAccepted="
+        + isAccepted
         + '}';
   }
 }

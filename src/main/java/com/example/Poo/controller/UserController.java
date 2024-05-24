@@ -18,7 +18,6 @@ import main.java.com.example.Poo.view.Login;
 public class UserController {
 
   private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
-  private boolean isValidUser;
   private final Login loginView;
 
   public UserController(Login loginView) {
@@ -30,9 +29,9 @@ public class UserController {
       loginView.showErrorMessage("Email and password are required");
       return;
     }
-    this.isValidUser = checkUserCredentials(user.getEmail(), user.getPassword());
+    int userId = checkUserCredentials(user.getEmail(), user.getPassword());
 
-    if (isValidUser) {
+    if (userId != -1) {
       if (user.isAdmin()) {
         // close the login view and open the hotel management view
         loginView.dispose();
@@ -41,7 +40,8 @@ public class UserController {
         roomManagementView.setVisible(true);
       } else {
         loginView.dispose();
-        HotelsView hotelsView = new HotelsView(720, 1280, new RoomManagementController());
+        user.setUserID(userId);
+        HotelsView hotelsView = new HotelsView(720, 1280, new RoomManagementController(), user);
         hotelsView.setVisible(true);
       }
     } else {
@@ -80,7 +80,7 @@ public class UserController {
     }
   }
 
-  private boolean checkUserCredentials(String email, String password) {
+  private int checkUserCredentials(String email, String password) {
     String query = "SELECT * FROM users WHERE email = ? AND password = ?";
     try (Connection connection =
             DriverManager.getConnection(
@@ -88,12 +88,19 @@ public class UserController {
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
       preparedStatement.setString(1, email);
       preparedStatement.setString(2, hashPassword(password));
+      // try (ResultSet resultSet = preparedStatement.executeQuery()) {
+      // return resultSet.next();
+      // }
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
-        return resultSet.next();
+        if (resultSet.next()) {
+          return resultSet.getInt("id");
+        } else {
+          return -1;
+        }
       }
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, "Error checking user credentials", e);
-      return false;
+      return -1;
     }
   }
 
@@ -121,14 +128,15 @@ public class UserController {
     }
     // crate if not exist users table
     createUsersTable();
-    String query = "INSERT INTO users (email, password, is_admin) VALUES (?, ?, ?)";
+    String query = "INSERT INTO users (id,email, password, is_admin) VALUES (? ,? , ?, ?)";
     try (Connection connection =
             DriverManager.getConnection(
                 Database.getUrl(), Database.getUser(), Database.getPassword());
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-      preparedStatement.setString(1, email);
-      preparedStatement.setString(2, hashPassword(password));
-      preparedStatement.setBoolean(3, isAdmin);
+      preparedStatement.setInt(1, (int) (System.currentTimeMillis() / 1000));
+      preparedStatement.setString(2, email);
+      preparedStatement.setString(3, hashPassword(password));
+      preparedStatement.setBoolean(4, isAdmin);
       int rowsInserted = preparedStatement.executeUpdate();
       return rowsInserted > 0;
     } catch (SQLException e) {

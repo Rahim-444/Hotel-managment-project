@@ -4,7 +4,9 @@ import java.awt.*;
 import javax.swing.*;
 import main.java.com.example.Poo.controller.ReservationController;
 import main.java.com.example.Poo.model.Date;
+import main.java.com.example.Poo.model.Reservation;
 import main.java.com.example.Poo.model.Room;
+import main.java.com.example.Poo.model.User;
 
 public class RoomsView extends JFrame {
 
@@ -17,35 +19,13 @@ public class RoomsView extends JFrame {
   private ReservationController reservationController = new ReservationController();
   public Date selectedDate;
   public Date selectedEndDate;
-  public Date availableFrom = new Date(2024, 5, 4);
-  public Date availableTo = new Date(2024, 12, 31);
-  public JLabel roomAvailability;
 
-  public RoomsView(Room room) {
+  public RoomsView(Room room, User user) {
     roomName = new JLabel(room.getType());
     roomName.setFont(new Font("Arial", Font.BOLD, 16));
     roomDescription =
         new JLabel("<html><p style='width: 550px'>" + room.getDescription() + "</p></html>");
     roomDescription.setFont(new Font("Arial", Font.PLAIN, 14));
-
-    roomAvailability =
-        new JLabel(
-            "<html><div style='display: flex; color: red;'>"
-                + "<div>Available from: "
-                + availableFrom.year
-                + "-"
-                + availableFrom.month
-                + "-"
-                + availableFrom.day
-                + "</div>"
-                + "<div>Available to: "
-                + availableTo.year
-                + "-"
-                + availableTo.month
-                + "-"
-                + availableTo.day
-                + "</div>"
-                + "</div></html>)");
 
     joinButton = new JButton("make reservation");
     cancelButton = new JButton("cancel reservation");
@@ -64,21 +44,21 @@ public class RoomsView extends JFrame {
                 public void windowClosed(java.awt.event.WindowEvent windowEvent) {
                   selectedDate = datePicker.selectedDate;
                   selectedEndDate = datePicker.selectedEndDate;
-                  ((JButton) getContentPane().getComponent(2)).setEnabled(true);
-                  ((JButton) getContentPane().getComponent(2))
-                      .setText(
-                          "Selected Date: "
-                              + selectedDate.year
-                              + "-"
-                              + selectedDate.month
-                              + "-"
-                              + selectedDate.day
-                              + " to "
-                              + selectedEndDate.year
-                              + "-"
-                              + selectedEndDate.month
-                              + "-"
-                              + selectedEndDate.day);
+                  (getContentPane().getComponent(2)).setEnabled(true);
+                  // ((JButton) getContentPane().getComponent(2))
+                  // .setText(
+                  // "Selected Date: "
+                  // + selectedDate.year
+                  // + "-"
+                  // + selectedDate.month
+                  // + "-"
+                  // + selectedDate.day
+                  // + " to "
+                  // + selectedEndDate.year
+                  // + "-"
+                  // + selectedEndDate.month
+                  // + "-"
+                  // + selectedEndDate.day);
                 }
               });
         });
@@ -98,7 +78,6 @@ public class RoomsView extends JFrame {
               {
                 add(roomName);
                 add(roomDescription);
-                add(roomAvailability);
               }
             },
             BorderLayout.CENTER);
@@ -111,13 +90,14 @@ public class RoomsView extends JFrame {
             return;
           }
           reservationController.makeReservation(
-              1, room.getRoomNumber(), selectedDate, selectedEndDate);
-          if (selectedDate == null || selectedEndDate == null) {
-            JOptionPane.showMessageDialog(null, "Please select a date range");
-            return;
-          }
-          reservationController.makeReservation(
-              1, room.getRoomNumber(), selectedDate, selectedEndDate);
+              new Reservation(
+                  (int) System.currentTimeMillis(),
+                  user.getUserID(),
+                  room.getRoomNumber(),
+                  selectedDate.toLocalDate(),
+                  selectedEndDate.toLocalDate(),
+                  0.0,
+                  false));
         });
     datePanel.add(joinButton);
 

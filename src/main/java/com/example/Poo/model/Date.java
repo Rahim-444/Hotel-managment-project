@@ -1,5 +1,7 @@
 package main.java.com.example.Poo.model;
 
+import java.time.LocalDate;
+
 public class Date {
   public int year;
   public int month;
@@ -48,5 +50,9 @@ public class Date {
 
   public String toString() {
     return this.year + "/" + this.month + "/" + this.day;
+  }
+
+  public LocalDate toLocalDate() {
+    return LocalDate.of(this.year, this.month, this.day);
   }
 }
