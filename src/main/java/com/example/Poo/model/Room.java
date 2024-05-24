@@ -26,11 +26,6 @@ public class Room {
   private JLabel imageLabel;
   private String desc;
 
-  // Database connection parameters
-  private String url = "jdbc:postgresql://localhost:5432/mydatabase";
-  private String user = "postgres";
-  private String password = "postgres";
-
   // Constructor
   public Room(
       int roomNumber,
@@ -51,7 +46,8 @@ public class Room {
 
   // Method to establish database connection
   public Connection connect() throws SQLException {
-    return DriverManager.getConnection(url, user, password);
+    return DriverManager.getConnection(
+        Database.getUrl(), Database.getUser(), Database.getPassword());
   }
 
   public int getRoomNumber() {

@@ -19,7 +19,7 @@ public class HotelsView extends JFrame {
 
   public HotelsView(int height, int width, RoomManagementController controller) {
     this.controller = controller;
-    this.rooms = controller.getAllRooms();
+    this.rooms = this.controller.getAllRooms();
     setTitle("Rooms");
     setSize(width, height);
     setLocationRelativeTo(null);
@@ -53,6 +53,7 @@ public class HotelsView extends JFrame {
     }
 
     setVisible(true);
+    pack();
   }
 
   private void handleSearch() {
@@ -88,12 +89,13 @@ public class HotelsView extends JFrame {
 
     public HotelCard(Room room) {
       this.room = room;
+      // setMaximumSize(new Dimension(250, 200));
       setPreferredSize(new Dimension(250, 200));
       setBackground(Color.WHITE);
       setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
       setLayout(null);
 
-      nameLabel = new JLabel(room.getType());
+      nameLabel = new JLabel(this.room.getType());
       nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
       nameLabel.setBounds(10, 10, 230, 20);
 

@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import main.java.com.example.Poo.model.Database;
 import main.java.com.example.Poo.model.User;
 import main.java.com.example.Poo.view.*;
 import main.java.com.example.Poo.view.Login;
@@ -19,10 +20,6 @@ public class UserController {
   private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
   private boolean isValidUser;
   private final Login loginView;
-
-  private final String dbUrl = "jdbc:postgresql://localhost:5432/mydatabase";
-  private final String dbUsername = "postgres";
-  private final String dbPassword = "postgres";
 
   public UserController(Login loginView) {
     this.loginView = loginView;
@@ -85,7 +82,9 @@ public class UserController {
 
   private boolean checkUserCredentials(String email, String password) {
     String query = "SELECT * FROM users WHERE email = ? AND password = ?";
-    try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+    try (Connection connection =
+            DriverManager.getConnection(
+                Database.getUrl(), Database.getUser(), Database.getPassword());
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
       preparedStatement.setString(1, email);
       preparedStatement.setString(2, hashPassword(password));
@@ -108,7 +107,9 @@ public class UserController {
     // doing this remove it
     // String query = "ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN
     // DEFAULT FALSE";
-    try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+    try (Connection connection =
+            DriverManager.getConnection(
+                Database.getUrl(), Database.getUser(), Database.getPassword());
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
       // Execute the SQL statement to create the users table
       preparedStatement.executeUpdate();
@@ -125,7 +126,9 @@ public class UserController {
     // crate if not exist users table
     createUsersTable();
     String query = "INSERT INTO users (email, password, is_admin) VALUES (?, ?, ?)";
-    try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+    try (Connection connection =
+            DriverManager.getConnection(
+                Database.getUrl(), Database.getUser(), Database.getPassword());
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
       preparedStatement.setString(1, email);
       preparedStatement.setString(2, hashPassword(password));
@@ -140,7 +143,9 @@ public class UserController {
 
   private boolean checkIfEmailExists(String email) {
     String query = "SELECT * FROM users WHERE email = ?";
-    try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+    try (Connection connection =
+            DriverManager.getConnection(
+                Database.getUrl(), Database.getUser(), Database.getPassword());
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
       preparedStatement.setString(1, email);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {

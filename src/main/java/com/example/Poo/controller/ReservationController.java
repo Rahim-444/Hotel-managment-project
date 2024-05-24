@@ -6,12 +6,10 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import main.java.com.example.Poo.model.Database;
 import main.java.com.example.Poo.model.Date;
 
 public class ReservationController {
-  private static final String url = "jdbc:mysql://localhost:3306/mydatabase";
-  private static final String user = "postgres";
-  private static final String password = "postgres";
 
   public boolean makeReservation(int userID, int roomNumber, Date checkInDate, Date checkOutDate) {
     java.sql.Date sqlCheckInDate =
@@ -27,7 +25,9 @@ public class ReservationController {
 
     BigDecimal totalPrice = calculateTotalPrice(roomNumber, checkInDate, checkOutDate);
 
-    try (Connection conn = DriverManager.getConnection(url, user, password);
+    try (Connection conn =
+            DriverManager.getConnection(
+                Database.getUrl(), Database.getUser(), Database.getPassword());
         PreparedStatement pstmt =
             conn.prepareStatement(
                 "INSERT INTO Reservations (id, room_number, CheckInDate, CheckOutDate, TotalPrice)"
@@ -49,7 +49,9 @@ public class ReservationController {
 
   public boolean isRoomAvailable(
       int roomNumber, java.sql.Date checkInDate, java.sql.Date checkOutDate) {
-    try (Connection conn = DriverManager.getConnection(url, user, password);
+    try (Connection conn =
+            DriverManager.getConnection(
+                Database.getUrl(), Database.getUser(), Database.getPassword());
         PreparedStatement pstmt =
             conn.prepareStatement(
                 "SELECT COUNT(*) FROM Reservations WHERE room_number = ? AND ((CheckInDate <= ? AND"
@@ -85,7 +87,9 @@ public class ReservationController {
   }
 
   public BigDecimal getPricePerNight(int roomNumber) {
-    try (Connection conn = DriverManager.getConnection(url, user, password);
+    try (Connection conn =
+            DriverManager.getConnection(
+                Database.getUrl(), Database.getUser(), Database.getPassword());
         PreparedStatement pstmt =
             conn.prepareStatement("SELECT price_per_night FROM Rooms WHERE room_number = ?")) {
       pstmt.setInt(1, roomNumber);
