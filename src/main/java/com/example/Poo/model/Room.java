@@ -17,8 +17,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-// import graphics
-
 public class Room {
   private static int id = 0;
   private int roomNumber;
@@ -27,9 +25,7 @@ public class Room {
   private double pricePerNight;
   private JLabel imageLabel;
   private String desc;
-  private LocalDate startDate = LocalDate.of(2024, 5, 10);
-  private LocalDate endDate = LocalDate.now();
-  private ArrayList<Reservation> reservations = new ArrayList<>();
+  private ArrayList<Reservation> reservationList;
 
   // Constructor
   public Room(
@@ -45,11 +41,12 @@ public class Room {
     this.pricePerNight = pricePerNight;
     this.imageLabel = imageLabel;
     this.desc = desc;
-    id++;
-    reservations.add(new Reservation(id, 1, 1, startDate, endDate, 100.0));
+    this.reservationList = new ArrayList<>();
   }
 
-  public Room() {}
+  public Room() {
+    this.reservationList = new ArrayList<>();
+  }
 
   public Connection connect() throws SQLException {
     return DriverManager.getConnection(
@@ -60,24 +57,16 @@ public class Room {
     return roomNumber;
   }
 
-  public JLabel getImageLabel() {
-    return imageLabel;
-  }
-
   public void setRoomNumber(int roomNumber) {
     this.roomNumber = roomNumber;
   }
 
-  public void updateRoom(int roomNumber, String columnName, Object data) {
-    String sql = "UPDATE rooms SET " + columnName + " = ? WHERE room_number = ?";
-    try (Connection conn = connect();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-      pstmt.setObject(1, data);
-      pstmt.setInt(2, roomNumber);
-      pstmt.executeUpdate();
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
-    }
+  public JLabel getImageLabel() {
+    return imageLabel;
+  }
+
+  public void setImageLabel(JLabel imageLabel) {
+    this.imageLabel = imageLabel;
   }
 
   public String getType() {
@@ -112,11 +101,65 @@ public class Room {
     this.desc = desc;
   }
 
-  // check if the table rooms exists
+  public ArrayList<Reservation> getReservationList() {
+    return reservationList;
+  }
+
+  public void setReservationList(ArrayList<Reservation> reservationList) {
+    this.reservationList = reservationList;
+  }
+
+  public void addReservation(Reservation reservation) {
+    this.reservationList.add(reservation);
+  }
+
+  public void removeReservation(Reservation reservation) {
+    this.reservationList.remove(reservation);
+  }
+
+  // Load reservations for this room from the database
+  private void loadReservations() {
+    String sql = "SELECT * FROM Reservations WHERE room_number = ?";
+    try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setInt(1, roomNumber);
+      try (ResultSet rs = pstmt.executeQuery()) {
+        while (rs.next()) {
+          Reservation reservation = new Reservation(
+              rs.getInt("id"),
+              rs.getInt("user_id"),
+              rs.getInt("room_number"),
+              rs.getDate("CheckInDate").toLocalDate(),
+              rs.getDate("CheckOutDate").toLocalDate(),
+              rs.getBigDecimal("TotalPrice").doubleValue());
+          reservationList.add(reservation);
+        }
+      }
+    } catch (SQLException e) {
+      System.out.println("Error loading reservations: " + e.getMessage());
+    }
+  }
+
+  public void updateRoom(int roomNumber, String columnName, Object data) {
+    String sql = "UPDATE rooms SET " + columnName + " = ? WHERE room_number = ?";
+    try (Connection conn = connect();
+        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setObject(1, data);
+      pstmt.setInt(2, roomNumber);
+      pstmt.executeUpdate();
+    } catch (SQLException e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  // Method to check if the table rooms exists and create it if it doesn't
   public void checkTable() {
-    String sql =
-        "CREATE TABLE IF NOT EXISTS rooms (room_number INT PRIMARY KEY, type TEXT,available"
-            + " BOOLEAN, price_per_night DOUBLE PRECISION, image BYTEA, description TEXT)";
+    String sql = "CREATE TABLE IF NOT EXISTS rooms (" +
+        "room_number INT PRIMARY KEY, " +
+        "type TEXT, " +
+        "available BOOLEAN, " +
+        "price_per_night DOUBLE PRECISION, " +
+        "image BYTEA, " +
+        "description TEXT)";
     try (Connection conn = connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
       pstmt.executeUpdate();
@@ -127,16 +170,14 @@ public class Room {
 
   public void addRoom() {
     checkTable();
-    String sql =
-        "INSERT INTO rooms (room_number, type, available, price_per_night, image, description)"
-            + " VALUES (?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO rooms (room_number, type, available, price_per_night, image, description) " +
+        "VALUES (?, ?, ?, ?, ?, ?)";
     try (Connection conn = connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
       pstmt.setInt(1, roomNumber);
       pstmt.setString(2, type);
       pstmt.setBoolean(3, available);
       pstmt.setDouble(4, pricePerNight);
-
       try {
         byte[] imageData = getImageData(imageLabel.getIcon());
         pstmt.setBytes(5, imageData);
@@ -144,7 +185,6 @@ public class Room {
         e.printStackTrace();
       }
       pstmt.setString(6, desc);
-
       pstmt.executeUpdate();
     } catch (SQLException e) {
       System.out.println(e.getMessage());
@@ -152,12 +192,10 @@ public class Room {
   }
 
   private byte[] getImageData(Icon icon) throws IOException {
-    BufferedImage image =
-        new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+    BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
     Graphics g = image.getGraphics();
     icon.paintIcon(null, g, 0, 0);
     g.dispose();
-
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     ImageIO.write(image, "png", baos);
     baos.flush();
@@ -184,14 +222,13 @@ public class Room {
         PreparedStatement pstmt = conn.prepareStatement(sql);
         ResultSet rs = pstmt.executeQuery()) {
       while (rs.next()) {
-        Room room =
-            new Room(
-                rs.getInt("room_number"),
-                rs.getString("type"),
-                rs.getBoolean("available"),
-                rs.getDouble("price_per_night"),
-                new JLabel(new ImageIcon((byte[]) rs.getObject("image"))),
-                rs.getString("description"));
+        Room room = new Room(
+            rs.getInt("room_number"),
+            rs.getString("type"),
+            rs.getBoolean("available"),
+            rs.getDouble("price_per_night"),
+            new JLabel(new ImageIcon((byte[]) rs.getObject("image"))),
+            rs.getString("description"));
         rooms.add(room);
       }
     } catch (SQLException e) {
