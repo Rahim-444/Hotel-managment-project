@@ -6,10 +6,18 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import main.java.com.example.Poo.model.Database;
 import main.java.com.example.Poo.model.Date;
+import main.java.com.example.Poo.model.Reservation;
 
 public class ReservationController {
+
+  public static Connection connect() throws SQLException {
+    return DriverManager.getConnection(
+        Database.getUrl(), Database.getUser(), Database.getPassword());
+  }
 
   public boolean makeReservation(int userID, int roomNumber, Date checkInDate, Date checkOutDate) {
     java.sql.Date sqlCheckInDate =
@@ -103,5 +111,40 @@ public class ReservationController {
       System.out.println("Error retrieving price per night: " + e.getMessage());
     }
     return BigDecimal.ZERO;
+  }
+
+  public static List<Reservation> getAllReservations() {
+    String sql = "SELECT * FROM Reservations";
+    List<Reservation> reservations = new ArrayList<>();
+    try (Connection conn = connect();
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery()) {
+      while (rs.next()) {
+        // TODO: Implement Reservation
+        // Reservation reservation =
+        // new Reservation(
+        // rs.getInt("id"),
+        // rs.getInt("room_number"),
+        // rs.getDate("CheckInDate"),
+        // rs.getDate("CheckOutDate"),
+        // rs.getBigDecimal("TotalPrice"));
+        // reservations.add(reservation);
+      }
+    } catch (SQLException e) {
+      System.out.println(e.getMessage());
+    }
+    return reservations;
+  }
+
+  public static boolean removeReservation(int reservationID) {
+    try (Connection conn = connect();
+        PreparedStatement pstmt = conn.prepareStatement("DELETE FROM Reservations WHERE id = ?")) {
+      pstmt.setInt(1, reservationID);
+      pstmt.executeUpdate();
+      return true;
+    } catch (SQLException e) {
+      System.out.println("Error removing reservation: " + e.getMessage());
+      return false;
+    }
   }
 }

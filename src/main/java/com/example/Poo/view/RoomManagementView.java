@@ -10,7 +10,7 @@ import main.java.com.example.Poo.controller.RoomManagementController;
 import main.java.com.example.Poo.model.Room;
 
 public class RoomManagementView extends JFrame {
-  private DefaultTableModel tableModel;
+  private myTableModel tableModel;
   private JTextField roomNumberField;
   private JTextField typeField;
   private JCheckBox availableCheckBox;
@@ -26,6 +26,17 @@ public class RoomManagementView extends JFrame {
 
   private RoomManagementController controller;
 
+  class myTableModel extends DefaultTableModel {
+    public myTableModel() {
+      super();
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+      return column != 0;
+    }
+  }
+
   public RoomManagementView(
       int screenHeight, int screenWidth, RoomManagementController controller) {
     this.controller = controller;
@@ -38,7 +49,7 @@ public class RoomManagementView extends JFrame {
   }
 
   private void initComponents() {
-    tableModel = new DefaultTableModel();
+    tableModel = new myTableModel();
     JTable roomTable = new JTable(tableModel);
     JScrollPane scrollPane = new JScrollPane(roomTable);
 
@@ -85,7 +96,8 @@ public class RoomManagementView extends JFrame {
                 columnName = "description";
                 data = tableModel.getValueAt(row, column);
               } else if (columnName.equals("Room Number")) {
-                System.out.println("Room number cannot be changed!");
+                // deletedRoomNumber.setText((String) tableModel.getValueAt(row, column));
+                System.out.println("Room Number cannot be changed!");
                 return;
               } else {
                 data = tableModel.getValueAt(row, column);

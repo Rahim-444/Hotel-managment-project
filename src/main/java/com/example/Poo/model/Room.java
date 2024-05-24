@@ -44,7 +44,6 @@ public class Room {
 
   public Room() {}
 
-  // Method to establish database connection
   public Connection connect() throws SQLException {
     return DriverManager.getConnection(
         Database.getUrl(), Database.getUser(), Database.getPassword());

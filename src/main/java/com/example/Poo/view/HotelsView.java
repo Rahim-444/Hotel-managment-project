@@ -89,7 +89,7 @@ public class HotelsView extends JFrame {
 
     public HotelCard(Room room) {
       this.room = room;
-      // setMaximumSize(new Dimension(250, 200));
+      setMaximumSize(new Dimension(250, 200));
       setPreferredSize(new Dimension(250, 200));
       setBackground(Color.WHITE);
       setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
