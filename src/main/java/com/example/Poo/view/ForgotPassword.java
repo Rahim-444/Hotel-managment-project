@@ -1,12 +1,11 @@
 package main.java.com.example.Poo.view;
 
-import java.util.concurrent.TimeUnit;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import main.java.com.example.Poo.model.Database;
+import java.util.concurrent.TimeUnit;
 import javax.mail.*;
+import javax.swing.*;
 import main.java.com.example.Poo.controller.*;
 
 public class ForgotPassword {
@@ -19,10 +18,10 @@ public class ForgotPassword {
   private static JPanel VerificationCodeInputPanel = new JPanel();
   // private static Message msg = new Message(); // Assuming Message is a class
   // you've defined
-  private static SendEmail sendEmail = new SendEmail(); // Assuming SendEmail is a class you've defined
-  private static Database Database = new Database(); // Assuming Database is a class you've defined
+  private static SendEmail sendEmail =
+      new SendEmail(); // Assuming SendEmail is a class you've defined
 
-  public static void main(String[] args) {
+  public ForgotPassword() {
     JFrame frame = new JFrame();
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(400, 300);
@@ -36,54 +35,64 @@ public class ForgotPassword {
     JButton nextButton = new JButton("Next");
     frame.add(nextButton, BorderLayout.SOUTH);
 
-    nextButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        String email = EmailField.getText();
-        userEmail = email;
-        if (email.isEmpty()) {
-          JOptionPane.showMessageDialog(frame, "Email field is empty");
-          return;
-        }
-        String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
-        if (!email.matches(regex)) {
-          // msg.displayMessage(Message.MessageType.ERROR, "Invalid email format",
-          // EmailInputPanel, frame.getLayout());
-          return;
-        }
-        // Document loginUser = Database.findInDataBase("Guests", "email", email);
-        // if (loginUser == null) {
-        // msg.displayMessage(Message.MessageType.ERROR, "Email does not exist",
-        // EmailInputPanel, frame.getLayout());
-        // return;
-        // }
+    nextButton.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            String email = EmailField.getText();
+            userEmail = email;
+            if (email.isEmpty()) {
+              JOptionPane.showMessageDialog(frame, "Email field is empty");
+              return;
+            }
+            String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+            if (!email.matches(regex)) {
+              // msg.displayMessage(Message.MessageType.ERROR, "Invalid email format",
+              // EmailInputPanel, frame.getLayout());
+              return;
+            }
+            // Document loginUser = Database.findInDataBase("Guests", "email", email);
+            // if (loginUser == null) {
+            // msg.displayMessage(Message.MessageType.ERROR, "Email does not exist",
+            // EmailInputPanel, frame.getLayout());
+            // return;
+            // }
 
-        String token = TokenGenerator.generateToken();
-        tokens.put(token, System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(expirationTime));
+            String token = TokenGenerator.generateToken();
+            tokens.put(
+                token, System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(expirationTime));
+            email = "abderrahimbelkacemi33@gmail.com";
 
-        try {
-          sendEmail.setupServerProperties();
-          sendEmail.draftEmail(email, "Verification Token", "Your verification token is: " + token);
-          boolean emailSent = sendEmail.sendEmail(email);
-          if (emailSent) {
-            msg.displayMessage(Message.MessageType.SUCCESS, "Email sent successfully", EmailInputPanel,
-                frame.getLayout());
-          } else {
-            msg.displayMessage(Message.MessageType.ERROR, "Email has not been sent, try again", EmailInputPanel,
-                frame.getLayout());
-            return;
+            try {
+              sendEmail.setupServerProperties();
+              sendEmail.draftEmail(
+                  email, "Verification Token", "Your verification token is: " + token);
+              boolean emailSent = sendEmail.sendEmail(email);
+              if (emailSent) {
+                // msg.displayMessage(
+                // Message.MessageType.SUCCESS,
+                // "Email sent successfully",
+                // EmailInputPanel,
+                // frame.getLayout());
+              } else {
+                // msg.displayMessage(
+                // Message.MessageType.ERROR,
+                // "Email has not been sent, try again",
+                // EmailInputPanel,
+                // frame.getLayout());
+                return;
+              }
+
+            } catch (Exception ex) {
+              ex.printStackTrace();
+            }
+
+            frame.remove(EmailInputPanel);
+            frame.add(VerificationCodeInputPanel);
+            frame.revalidate();
+            frame.repaint();
           }
-
-        } catch (Exception ex) {
-          ex.printStackTrace();
-        }
-
-        frame.remove(EmailInputPanel);
-        frame.add(VerificationCodeInputPanel);
-        frame.revalidate();
-        frame.repaint();
-      }
-    });
+        });
 
     frame.setVisible(true);
   }
