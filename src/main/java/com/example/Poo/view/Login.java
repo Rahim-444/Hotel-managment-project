@@ -22,6 +22,7 @@ public class Login extends JFrame implements ComponentListener {
     private JPasswordField confirmPasswordField;
     private JLabel switchContent;
     private JLabel switchClickabale;
+    private JLabel forgotPassword;
     JLabel label;
     private ImageIcon icon;
     private ImageIcon logo = new ImageIcon("src/main/java/resources/Sheraton background removed.png");
@@ -84,6 +85,20 @@ public class Login extends JFrame implements ComponentListener {
                     new java.awt.event.MouseAdapter() {
                         public void mouseClicked(java.awt.event.MouseEvent evt) {
                             new Login(screenHeight, screenWidth, false).setVisible(true);
+                            dispose();
+                        }
+                    });
+            this.forgotPassword = new JLabel("Forgot Password?");
+            this.forgotPassword.setBounds(
+                    (int) (0.75 * this.screenWidth) - 50,
+                    (int) (this.screenHeight - (this.screenHeight / 3) + 1.2 * this.padding),
+                    this.buttonWidth,
+                    50);
+            this.forgotPassword.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            this.forgotPassword.addMouseListener(
+                    new java.awt.event.MouseAdapter() {
+                        public void mouseClicked(java.awt.event.MouseEvent evt) {
+                            new ForgotPassword(screenHeight, screenWidth, true).setVisible(true);
                             dispose();
                         }
                     });
