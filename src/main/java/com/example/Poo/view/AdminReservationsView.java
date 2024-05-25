@@ -133,7 +133,12 @@ public class AdminReservationsView extends JFrame {
   private void acceptRservation() {
     try {
       int reservationidInt = Integer.parseInt(reservationID.getText());
-      // TODO: Implement accept reservation
+      ReservationController.acceptReservation(reservationidInt);
+      for (Reservation res : ReservationController.getAllReservations()) {
+        if (res.getReservationID() == reservationidInt) {
+          res.setAccepted(true);
+        }
+      }
 
       reservationID.setText("");
       showAllReservations();

@@ -92,20 +92,17 @@ public class DatePicker extends JFrame {
     for (int i = 1; i <= maxDaysInMonth; i++) {
       final int day = i;
       JButton dayButton = new JButton(Integer.toString(day));
-      Date date =
-          new Date(
-              currentCalendar.get(Calendar.YEAR), currentCalendar.get(Calendar.MONTH) + 1, day);
+      Date date = new Date(
+          currentCalendar.get(Calendar.YEAR), currentCalendar.get(Calendar.MONTH) + 1, day);
       for (Reservation res : room.getReservations()) {
-        Date checkInDate =
-            new Date(
-                res.getCheckInDate().getYear(),
-                res.getCheckInDate().getMonthValue(),
-                res.getCheckInDate().getDayOfMonth());
-        Date checkOutDate =
-            new Date(
-                res.getCheckOutDate().getYear(),
-                res.getCheckOutDate().getMonthValue(),
-                res.getCheckOutDate().getDayOfMonth());
+        Date checkInDate = new Date(
+            res.getCheckInDate().getYear(),
+            res.getCheckInDate().getMonthValue(),
+            res.getCheckInDate().getDayOfMonth());
+        Date checkOutDate = new Date(
+            res.getCheckOutDate().getYear(),
+            res.getCheckOutDate().getMonthValue(),
+            res.getCheckOutDate().getDayOfMonth());
 
         if (date.CompareTo(checkInDate) >= 0 && date.CompareTo(checkOutDate) <= 0) {
           dayButton.setBackground(Color.RED);
@@ -116,35 +113,31 @@ public class DatePicker extends JFrame {
           new ActionListener() {
             public void actionPerformed(ActionEvent e) {
               if (!firstSelected) {
-                selectedDate =
-                    new Date(
-                        currentCalendar.get(Calendar.YEAR),
-                        currentCalendar.get(Calendar.MONTH) + 1,
-                        day);
+                selectedDate = new Date(
+                    currentCalendar.get(Calendar.YEAR),
+                    currentCalendar.get(Calendar.MONTH),
+                    day);
                 dayButton.setBorder(BorderFactory.createLineBorder(Color.BLUE));
                 firstSelected = true;
               } else {
-                selectedEndDate =
-                    new Date(
-                        currentCalendar.get(Calendar.YEAR),
-                        currentCalendar.get(Calendar.MONTH) + 1,
-                        day);
+                selectedEndDate = new Date(
+                    currentCalendar.get(Calendar.YEAR),
+                    currentCalendar.get(Calendar.MONTH),
+                    day);
                 if (selectedEndDate.CompareTo(selectedDate) < 0) {
                   JOptionPane.showMessageDialog(null, "End date must be after start date");
                   selectedEndDate = null;
                   selectedDate = null;
                 }
                 for (Reservation res : room.getReservations()) {
-                  Date checkInDate =
-                      new Date(
-                          res.getCheckInDate().getYear(),
-                          res.getCheckInDate().getMonthValue(),
-                          res.getCheckInDate().getDayOfMonth());
-                  Date checkOutDate =
-                      new Date(
-                          res.getCheckOutDate().getYear(),
-                          res.getCheckOutDate().getMonthValue(),
-                          res.getCheckOutDate().getDayOfMonth());
+                  Date checkInDate = new Date(
+                      res.getCheckInDate().getYear(),
+                      res.getCheckInDate().getMonthValue(),
+                      res.getCheckInDate().getDayOfMonth());
+                  Date checkOutDate = new Date(
+                      res.getCheckOutDate().getYear(),
+                      res.getCheckOutDate().getMonthValue(),
+                      res.getCheckOutDate().getDayOfMonth());
                   if (selectedDate.CompareTo(checkInDate) < 0
                       && selectedEndDate.CompareTo(checkOutDate) > 0) {
                     JOptionPane.showMessageDialog(null, "Room is already reserved for this period");
@@ -168,7 +161,7 @@ public class DatePicker extends JFrame {
   }
 
   private String getShortDayOfWeekString(int dayOfWeek) {
-    String[] daysOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+    String[] daysOfWeek = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
     return daysOfWeek[dayOfWeek % 7];
   }
 }

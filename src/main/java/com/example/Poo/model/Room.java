@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import main.java.com.example.Poo.controller.ReservationController;
 
 public class Room {
   private static int id = 0;
@@ -35,6 +36,22 @@ public class Room {
       JLabel imageLabel,
       String desc,
       ArrayList<Reservation> reservationList) {
+    this.roomNumber = roomNumber;
+    this.type = type;
+    this.available = available;
+    this.pricePerNight = pricePerNight;
+    this.imageLabel = imageLabel;
+    this.desc = desc;
+    this.reservationList = new ArrayList<>();
+  }
+
+  public Room(
+      int roomNumber,
+      String type,
+      boolean available,
+      double pricePerNight,
+      JLabel imageLabel,
+      String desc) {
     this.roomNumber = roomNumber;
     this.type = type;
     this.available = available;
@@ -125,15 +142,14 @@ public class Room {
       pstmt.setInt(1, roomNumber);
       try (ResultSet rs = pstmt.executeQuery()) {
         while (rs.next()) {
-          Reservation reservation =
-              new Reservation(
-                  rs.getInt("reservationid"),
-                  rs.getInt("id"),
-                  rs.getInt("room_number"),
-                  rs.getDate("CheckInDate").toLocalDate(),
-                  rs.getDate("CheckOutDate").toLocalDate(),
-                  rs.getBigDecimal("TotalPrice").doubleValue(),
-                  rs.getBoolean("isAccepted"));
+          Reservation reservation = new Reservation(
+              rs.getInt("reservationid"),
+              rs.getInt("id"),
+              rs.getInt("room_number"),
+              rs.getDate("CheckInDate").toLocalDate(),
+              rs.getDate("CheckOutDate").toLocalDate(),
+              rs.getBigDecimal("TotalPrice").doubleValue(),
+              rs.getBoolean("isAccepted"));
           reservationList.add(reservation);
         }
       }
@@ -156,14 +172,13 @@ public class Room {
 
   // Method to check if the table rooms exists and create it if it doesn't
   public void checkTable() {
-    String sql =
-        "CREATE TABLE IF NOT EXISTS rooms ("
-            + "room_number INT PRIMARY KEY, "
-            + "type TEXT, "
-            + "available BOOLEAN, "
-            + "price_per_night DOUBLE PRECISION, "
-            + "image BYTEA, "
-            + "description TEXT)";
+    String sql = "CREATE TABLE IF NOT EXISTS rooms ("
+        + "room_number INT PRIMARY KEY, "
+        + "type TEXT, "
+        + "available BOOLEAN, "
+        + "price_per_night DOUBLE PRECISION, "
+        + "image BYTEA, "
+        + "description TEXT)";
     try (Connection conn = connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
       pstmt.executeUpdate();
@@ -174,9 +189,8 @@ public class Room {
 
   public void addRoom() {
     checkTable();
-    String sql =
-        "INSERT INTO rooms (room_number, type, available, price_per_night, image, description) "
-            + "VALUES (?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO rooms (room_number, type, available, price_per_night, image, description) "
+        + "VALUES (?, ?, ?, ?, ?, ?)";
     try (Connection conn = connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
       pstmt.setInt(1, roomNumber);
@@ -197,8 +211,7 @@ public class Room {
   }
 
   private byte[] getImageData(Icon icon) throws IOException {
-    BufferedImage image =
-        new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+    BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
     Graphics g = image.getGraphics();
     icon.paintIcon(null, g, 0, 0);
     g.dispose();
@@ -228,15 +241,15 @@ public class Room {
         PreparedStatement pstmt = conn.prepareStatement(sql);
         ResultSet rs = pstmt.executeQuery()) {
       while (rs.next()) {
-        Room room =
-            new Room(
-                rs.getInt("room_number"),
-                rs.getString("type"),
-                rs.getBoolean("available"),
-                rs.getDouble("price_per_night"),
-                new JLabel(new ImageIcon((byte[]) rs.getObject("image"))),
-                rs.getString("description"),
-                new ArrayList<>());
+        int roomNumber = rs.getInt("room_number");
+        Room room = new Room(
+            roomNumber,
+            rs.getString("type"),
+            rs.getBoolean("available"),
+            rs.getDouble("price_per_night"),
+            new JLabel(new ImageIcon((byte[]) rs.getObject("image"))),
+            rs.getString("description"));
+        room.setReservationList(ReservationController.getReservationsByRoomNumber(roomNumber));
         rooms.add(room);
       }
     } catch (SQLException e) {

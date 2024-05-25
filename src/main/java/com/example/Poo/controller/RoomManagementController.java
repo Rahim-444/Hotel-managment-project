@@ -2,7 +2,6 @@ package main.java.com.example.Poo.controller;
 
 import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -24,8 +23,7 @@ public class RoomManagementController {
       double pricePerNight,
       JLabel imageLabel,
       String desc) {
-    Room newRoom =
-        new Room(roomNumber, type, available, pricePerNight, imageLabel, desc, new ArrayList<>());
+    Room newRoom = new Room(roomNumber, type, available, pricePerNight, imageLabel, desc);
     newRoom.addRoom();
     // room.addRoom(roomNumber, type, available, pricePerNight);
   }
@@ -63,8 +61,7 @@ public class RoomManagementController {
             frame, "Error loading image: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
       }
     }
-    // Handle case when user cancels file chooser or error occurs
-    return null; // Return null or a default label if appropriate
+    return null;
   }
 
   public List<Room> getAllRooms() {

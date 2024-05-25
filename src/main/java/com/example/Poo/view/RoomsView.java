@@ -44,7 +44,7 @@ public class RoomsView extends JFrame {
                 public void windowClosed(java.awt.event.WindowEvent windowEvent) {
                   selectedDate = datePicker.selectedDate;
                   selectedEndDate = datePicker.selectedEndDate;
-                  (getContentPane().getComponent(2)).setEnabled(true);
+                  // (getContentPane().getComponent(2)).setEnabled(true);
                   // ((JButton) getContentPane().getComponent(2))
                   // .setText(
                   // "Selected Date: "
