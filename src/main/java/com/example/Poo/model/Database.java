@@ -1,10 +1,9 @@
 package main.java.com.example.Poo.model;
 
 public class Database {
-  static String url =
-      "jdbc:postgresql://pg-337a9f5c-danaamine080807.j.aivencloud.com:20758/defaultdb";
-  static String user = "avnadmin";
-  static String password = "AVNS_IpwBPJ7uvfZvldNmFWE";
+  static String url = System.getenv("DbHost");
+  static String user = System.getenv("DbUser");
+  static String password = System.getenv("DbPassword");
 
   public static String getUrl() {
     return url;

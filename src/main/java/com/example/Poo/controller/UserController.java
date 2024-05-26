@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import main.java.com.example.Poo.model.Database;
 import main.java.com.example.Poo.model.User;
 import main.java.com.example.Poo.view.*;
@@ -145,7 +146,7 @@ public class UserController {
     }
   }
 
-  private boolean checkIfEmailExists(String email) {
+  public static boolean checkIfEmailExists(String email) {
     String query = "SELECT * FROM users WHERE email = ?";
     try (Connection connection =
             DriverManager.getConnection(
@@ -161,8 +162,20 @@ public class UserController {
     }
   }
 
-
-   
-
-
+  public static boolean alterUserPassword(String email) {
+    String newPassword = JOptionPane.showInputDialog("Enter new password");
+    String query = "UPDATE users SET password = ? WHERE email = ?";
+    try (Connection connection =
+            DriverManager.getConnection(
+                Database.getUrl(), Database.getUser(), Database.getPassword());
+        PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+      preparedStatement.setString(1, hashPassword(newPassword));
+      preparedStatement.setString(2, email);
+      int rowsUpdated = preparedStatement.executeUpdate();
+      return rowsUpdated > 0;
+    } catch (SQLException e) {
+      LOGGER.log(Level.SEVERE, "Error updating user password", e);
+      return false;
+    }
+  }
 }

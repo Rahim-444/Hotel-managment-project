@@ -14,8 +14,8 @@ public class SendEmail {
   MimeMessage mimeMessage = null;
 
   public boolean sendEmail(String Email) {
-    String fromUser = "sectionbinfoing@gmail.com";
-    String fromUserPassword = "gtpm zqsw zzjm lasi";
+    String fromUser = System.getenv("MY_EMAIL");
+    String fromUserPassword = System.getenv("MY_PASSWORD");
     String emailHost = "smtp.gmail.com";
     try {
       Transport transport = newSession.getTransport("smtp");
@@ -33,7 +33,7 @@ public class SendEmail {
 
   public MimeMessage draftEmail(String Email, String message, String token)
       throws AddressException, MessagingException, IOException {
-    String[] emailReceipients = { "danaamine@gmail.com", Email }; // Enter list of
+    String[] emailReceipients = {"danaamine@gmail.com", Email}; // Enter list of
     String emailSubject = "sheraton hotel token";
     String emailBody = message + token + " " + emailReceipients[1];
     mimeMessage = new MimeMessage(newSession);

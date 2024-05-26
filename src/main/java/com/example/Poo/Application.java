@@ -11,7 +11,8 @@ public class Application {
     // RoomManagementView roomManagementView =
     // new RoomManagementView(720, 1280, new RoomManagementController());
     // roomManagementView.setVisible(true);
-    AdminReservationsView adminReservationsView = new AdminReservationsView(720, 1280);
-    adminReservationsView.setVisible(true);
+    // AdminReservationsView adminReservationsView = new AdminReservationsView(720,
+    // 1280);
+    // adminReservationsView.setVisible(true);
   }
 }
