@@ -6,3 +6,4 @@ workspace/
 .idea
 
 user_credentials.txt
+.env
